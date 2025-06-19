@@ -85,20 +85,22 @@ const DemandPrediction = () => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">虛擬顧客代理人需求預測</h2>
-        <p className="text-gray-600">
+        <h2 className="text-3xl font-bold text-white mb-3">虛擬顧客代理人需求預測</h2>
+        <p className="text-gray-300 text-lg">
           結合 Agent-Based Modeling (ABM) 與大型語言模型 (LLM)，模擬不同客群的購買行為與偏好
         </p>
       </div>
 
       {/* Simulation Control */}
-      <Card className="border-0 shadow-lg">
+      <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-purple-600" />
+          <CardTitle className="flex items-center gap-3 text-purple-300">
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <Brain className="h-6 w-6" />
+            </div>
             ABM + LLM 智慧模擬系統
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-gray-300 text-base">
             系統將生成 3,620 個虛擬顧客代理人，模擬其對新品的反應與購買決策
           </CardDescription>
         </CardHeader>
@@ -106,15 +108,15 @@ const DemandPrediction = () => {
           <Button 
             onClick={handleSimulate} 
             disabled={isSimulating}
-            className="w-full bg-purple-600 hover:bg-purple-700"
+            className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white border-0 py-3 text-lg font-medium"
           >
             {isSimulating ? '正在模擬虛擬顧客反應...' : '開始 ABM + LLM 模擬'}
           </Button>
           {isSimulating && (
-            <div className="mt-4 space-y-2">
-              <p className="text-sm text-gray-600">模擬進度</p>
-              <Progress value={66} className="w-full" />
-              <p className="text-xs text-gray-500">正在分析虛擬顧客代理人的購買意向...</p>
+            <div className="mt-6 space-y-3">
+              <p className="text-sm text-gray-300">模擬進度</p>
+              <Progress value={66} className="w-full h-2" />
+              <p className="text-xs text-gray-400">正在分析虛擬顧客代理人的購買意向...</p>
             </div>
           )}
         </CardContent>
@@ -122,70 +124,70 @@ const DemandPrediction = () => {
 
       {/* Results */}
       {results && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Customer Personas Analysis */}
-          <Card className="border-0 shadow-lg">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
             <CardHeader>
-              <CardTitle className="text-green-700">虛擬顧客代理人分析結果</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-emerald-300">虛擬顧客代理人分析結果</CardTitle>
+              <CardDescription className="text-gray-300 text-base">
                 基於匿名化顧客數據生成的 Persona-Aligned Agents 反應分析
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6">
                 {results.map((customer) => (
-                  <div key={customer.id} className="p-4 border rounded-lg bg-gradient-to-r from-gray-50 to-blue-50">
-                    <div className="flex justify-between items-start mb-4">
+                  <div key={customer.id} className="p-6 border border-slate-500 rounded-xl bg-gradient-to-r from-slate-600/50 to-slate-700/50">
+                    <div className="flex justify-between items-start mb-6">
                       <div>
-                        <h3 className="font-semibold text-lg flex items-center gap-2">
-                          <Users className="h-5 w-5 text-blue-600" />
+                        <h3 className="font-semibold text-xl flex items-center gap-3 text-white mb-2">
+                          <Users className="h-6 w-6 text-blue-400" />
                           {customer.persona}
                         </h3>
-                        <p className="text-sm text-gray-600">{customer.age} | 樣本數: {customer.count} 人</p>
+                        <p className="text-sm text-gray-400">{customer.age} | 樣本數: {customer.count} 人</p>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">購買意願</p>
-                        <div className="flex items-center gap-2">
-                          <Progress value={customer.purchaseIntention} className="flex-1" />
-                          <span className="text-sm font-semibold">{customer.purchaseIntention}%</span>
+                        <p className="text-sm text-gray-400 mb-2">購買意願</p>
+                        <div className="flex items-center gap-3">
+                          <Progress value={customer.purchaseIntention} className="flex-1 h-3" />
+                          <span className="text-sm font-semibold text-white min-w-[3rem]">{customer.purchaseIntention}%</span>
                         </div>
                       </div>
                       
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">價格敏感度</p>
-                        <div className="flex items-center gap-2">
-                          <Progress value={customer.priceSensitivity} className="flex-1" />
-                          <span className="text-sm font-semibold">{customer.priceSensitivity}%</span>
+                        <p className="text-sm text-gray-400 mb-2">價格敏感度</p>
+                        <div className="flex items-center gap-3">
+                          <Progress value={customer.priceSensitivity} className="flex-1 h-3" />
+                          <span className="text-sm font-semibold text-white min-w-[3rem]">{customer.priceSensitivity}%</span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                      <div className="flex items-center gap-2">
-                        <Palette className="h-4 w-4 text-purple-600" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                      <div className="flex items-center gap-3">
+                        <Palette className="h-5 w-5 text-purple-400" />
                         <div>
-                          <p className="text-sm text-gray-600">顏色偏好</p>
-                          <p className="font-medium">{customer.colorPreference}</p>
+                          <p className="text-sm text-gray-400">顏色偏好</p>
+                          <p className="font-medium text-white">{customer.colorPreference}</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2">
-                        <Shirt className="h-4 w-4 text-green-600" />
+                      <div className="flex items-center gap-3">
+                        <Shirt className="h-5 w-5 text-emerald-400" />
                         <div>
-                          <p className="text-sm text-gray-600">材質偏好</p>
-                          <p className="font-medium">{customer.materialPreference}</p>
+                          <p className="text-sm text-gray-400">材質偏好</p>
+                          <p className="font-medium text-white">{customer.materialPreference}</p>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-start gap-2">
-                      <Heart className="h-4 w-4 text-red-500 mt-1" />
+                    <div className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-lg">
+                      <Heart className="h-5 w-5 text-red-400 mt-1" />
                       <div>
-                        <p className="text-sm text-gray-600">模擬直覺反應</p>
-                        <p className="font-medium text-gray-800">"{customer.response}"</p>
+                        <p className="text-sm text-gray-400">模擬直覺反應</p>
+                        <p className="font-medium text-white">"{customer.response}"</p>
                       </div>
                     </div>
                   </div>
@@ -195,11 +197,11 @@ const DemandPrediction = () => {
           </Card>
 
           {/* Demand Forecast Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
               <CardHeader>
-                <CardTitle>市場份額預測</CardTitle>
-                <CardDescription>各客群對新品的預期接受度</CardDescription>
+                <CardTitle className="text-emerald-300">市場份額預測</CardTitle>
+                <CardDescription className="text-gray-300">各客群對新品的預期接受度</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -218,24 +220,38 @@ const DemandPrediction = () => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#334155', 
+                        border: '1px solid #64748B', 
+                        borderRadius: '8px',
+                        color: '#F1F5F9'
+                      }} 
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg">
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
               <CardHeader>
-                <CardTitle>分客群需求預測</CardTitle>
-                <CardDescription>首月預期銷售量 (件)</CardDescription>
+                <CardTitle className="text-emerald-300">分客群需求預測</CardTitle>
+                <CardDescription className="text-gray-300">首月預期銷售量 (件)</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={demandForecast}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="segment" angle={-45} textAnchor="end" height={100} />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                    <XAxis dataKey="segment" angle={-45} textAnchor="end" height={100} stroke="#94A3B8" />
+                    <YAxis stroke="#94A3B8" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#334155', 
+                        border: '1px solid #64748B', 
+                        borderRadius: '8px',
+                        color: '#F1F5F9'
+                      }} 
+                    />
                     <Bar dataKey="預期銷量" fill="#8B5CF6" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -244,31 +260,31 @@ const DemandPrediction = () => {
           </div>
 
           {/* Summary */}
-          <Card className="border-0 shadow-lg bg-gradient-to-r from-purple-50 to-blue-50">
+          <Card className="border-0 shadow-xl bg-gradient-to-r from-purple-800/50 to-blue-800/50 text-white">
             <CardHeader>
-              <CardTitle className="text-purple-700">動態需求預測總結</CardTitle>
+              <CardTitle className="text-purple-300">動態需求預測總結</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-800">2,475</p>
-                  <p className="text-sm text-gray-600">預期首月總銷量 (件)</p>
+                  <DollarSign className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-white">2,475</p>
+                  <p className="text-sm text-gray-300">預期首月總銷量 (件)</p>
                 </div>
                 <div className="text-center">
-                  <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-800">67.5%</p>
-                  <p className="text-sm text-gray-600">整體購買意願</p>
+                  <Users className="h-10 w-10 text-blue-400 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-white">67.5%</p>
+                  <p className="text-sm text-gray-300">整體購買意願</p>
                 </div>
                 <div className="text-center">
-                  <Heart className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-gray-800">35%</p>
-                  <p className="text-sm text-gray-600">主力客群佔比</p>
+                  <Heart className="h-10 w-10 text-red-400 mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-white">35%</p>
+                  <p className="text-sm text-gray-300">主力客群佔比</p>
                 </div>
               </div>
-              <div className="mt-4 p-4 bg-white rounded-lg">
-                <p className="text-sm text-gray-700">
-                  <strong>關鍵洞察：</strong>時尚年輕族群展現最高購買意願，建議針對此族群優先進行行銷推廣。
+              <div className="mt-6 p-6 bg-slate-800/50 rounded-xl">
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  <strong className="text-purple-300">關鍵洞察：</strong>時尚年輕族群展現最高購買意願，建議針對此族群優先進行行銷推廣。
                   品質導向消費者雖然價格敏感度較低，但更重視產品品質說明。
                   建議制定差異化定價策略以涵蓋不同客群需求。
                 </p>
