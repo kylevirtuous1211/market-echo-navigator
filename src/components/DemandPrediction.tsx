@@ -1,13 +1,18 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Users, Brain, Heart, DollarSign, Palette, Shirt } from 'lucide-react';
+import { Users, Brain, Heart, DollarSign, Palette, Shirt, ArrowRight, Info } from 'lucide-react';
 
-const DemandPrediction = () => {
+interface DemandPredictionProps {
+  productData?: any;
+  onComplete: (data: any) => void;
+  onProceed: () => void;
+}
+
+const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComplete, onProceed }) => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [results, setResults] = useState(null);
 
@@ -79,6 +84,16 @@ const DemandPrediction = () => {
     // 模擬 ABM + LLM 分析延遲
     await new Promise(resolve => setTimeout(resolve, 3000));
     setResults(virtualCustomers);
+    
+    // Prepare demand data for next step
+    const demandData = {
+      totalDemand: 2475,
+      segments: virtualCustomers,
+      overallIntent: 67.5,
+      marketShare: pieData
+    };
+    
+    onComplete(demandData);
     setIsSimulating(false);
   };
 
@@ -91,6 +106,43 @@ const DemandPrediction = () => {
         </p>
       </div>
 
+      {/* Baseline Context */}
+      {productData && (
+        <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-800/30 to-purple-800/30 text-white border border-blue-500/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-blue-300">
+              <Info className="h-6 w-6" />
+              基線數據參考
+            </CardTitle>
+            <CardDescription className="text-gray-300 text-base">
+              基於新品評估階段的歷史商品分析結果，以下為相似商品的平均表現指標
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-blue-300">
+                  {Math.round(productData.baselineMetrics.avgSalesVelocity)}
+                </p>
+                <p className="text-sm text-gray-300">平均銷售速度 (件/月)</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-purple-300">
+                  {Math.round(productData.baselineMetrics.avgLifeCycle)}
+                </p>
+                <p className="text-sm text-gray-300">平均生命週期 (月)</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-emerald-300">
+                  {productData.baselineMetrics.avgProfit.toFixed(1)}%
+                </p>
+                <p className="text-sm text-gray-300">平均利潤率</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Simulation Control */}
       <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
         <CardHeader>
@@ -101,7 +153,7 @@ const DemandPrediction = () => {
             ABM + LLM 智慧模擬系統
           </CardTitle>
           <CardDescription className="text-gray-300 text-base">
-            系統將生成 3,620 個虛擬顧客代理人，模擬其對新品的反應與購買決策
+            系統將生成 3,620 個虛擬顧客代理人，基於歷史基線數據模擬其對新品的反應與購買決策
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -130,7 +182,7 @@ const DemandPrediction = () => {
             <CardHeader>
               <CardTitle className="text-emerald-300">虛擬顧客代理人分析結果</CardTitle>
               <CardDescription className="text-gray-300 text-base">
-                基於匿名化顧客數據生成的 Persona-Aligned Agents 反應分析
+                基於歷史基線數據生成的 Persona-Aligned Agents 反應分析
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -265,7 +317,7 @@ const DemandPrediction = () => {
               <CardTitle className="text-purple-300">動態需求預測總結</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="text-center">
                   <DollarSign className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
                   <p className="text-3xl font-bold text-white">2,475</p>
@@ -282,12 +334,22 @@ const DemandPrediction = () => {
                   <p className="text-sm text-gray-300">主力客群佔比</p>
                 </div>
               </div>
-              <div className="mt-6 p-6 bg-slate-800/50 rounded-xl">
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  <strong className="text-purple-300">關鍵洞察：</strong>時尚年輕族群展現最高購買意願，建議針對此族群優先進行行銷推廣。
-                  品質導向消費者雖然價格敏感度較低，但更重視產品品質說明。
-                  建議制定差異化定價策略以涵蓋不同客群需求。
-                </p>
+              
+              {/* Next Step Button */}
+              <div className="flex items-center justify-between p-6 bg-slate-800/50 rounded-xl">
+                <div>
+                  <h3 className="text-xl font-bold text-purple-300 mb-2">需求預測完成</h3>
+                  <p className="text-gray-300">
+                    虛擬顧客反應分析已完成，現在可以進行市場趨勢驗證以優化預測結果
+                  </p>
+                </div>
+                <Button 
+                  onClick={onProceed}
+                  className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white border-0 py-3 px-6 text-lg font-medium flex items-center gap-2"
+                >
+                  市場趨勢驗證
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
               </div>
             </CardContent>
           </Card>

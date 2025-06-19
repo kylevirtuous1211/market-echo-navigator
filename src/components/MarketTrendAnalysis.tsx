@@ -1,13 +1,18 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, MessageCircle, ThumbsUp, ThumbsDown, Search, Globe, Eye } from 'lucide-react';
+import { TrendingUp, MessageCircle, ThumbsUp, ThumbsDown, Search, Globe, Eye, Info, CheckCircle } from 'lucide-react';
 
-const MarketTrendAnalysis = () => {
+interface MarketTrendAnalysisProps {
+  productData?: any;
+  demandData?: any;
+  onComplete: () => void;
+}
+
+const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, demandData, onComplete }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
 
@@ -54,6 +59,7 @@ const MarketTrendAnalysis = () => {
     // 模擬 API 分析延遲
     await new Promise(resolve => setTimeout(resolve, 2500));
     setResults(mockTrendData);
+    onComplete();
     setIsAnalyzing(false);
   };
 
@@ -66,6 +72,78 @@ const MarketTrendAnalysis = () => {
         </p>
       </div>
 
+      {/* Context Summary */}
+      {productData && demandData && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-800/30 to-purple-800/30 text-white border border-blue-500/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-blue-300">
+                <Info className="h-6 w-6" />
+                新品評估結果
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-300">
+                  <strong>商品名稱：</strong>{productData.name}
+                </p>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-blue-300">
+                      {Math.round(productData.baselineMetrics.avgSalesVelocity)}
+                    </p>
+                    <p className="text-xs text-gray-400">平均銷速</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-purple-300">
+                      {Math.round(productData.baselineMetrics.avgLifeCycle)}
+                    </p>
+                    <p className="text-xs text-gray-400">生命週期</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-emerald-300">
+                      {productData.baselineMetrics.avgProfit.toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-gray-400">利潤率</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-xl bg-gradient-to-r from-purple-800/30 to-emerald-800/30 text-white border border-purple-500/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-purple-300">
+                <Info className="h-6 w-6" />
+                需求預測結果
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-lg font-bold text-purple-300">
+                    {demandData.totalDemand?.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-400">預期總需求</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-blue-300">
+                    {demandData.overallIntent}%
+                  </p>
+                  <p className="text-xs text-gray-400">整體購買意願</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-emerald-300">
+                    {demandData.segments?.length || 0}
+                  </p>
+                  <p className="text-xs text-gray-400">客群分類</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Analysis Control */}
       <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
         <CardHeader>
@@ -76,7 +154,7 @@ const MarketTrendAnalysis = () => {
             外部市場數據整合分析
           </CardTitle>
           <CardDescription className="text-gray-300 text-base">
-            分析 OpView、Google Trends、Dcard、PTT、Instagram 等平台的相關討論與聲量趨勢
+            分析 OpView、Google Trends、Dcard、PTT、Instagram 等平台的相關討論與聲量趨勢，驗證內部需求預測
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -303,13 +381,16 @@ const MarketTrendAnalysis = () => {
             </CardContent>
           </Card>
 
-          {/* Summary */}
+          {/* Final Summary */}
           <Card className="border-0 shadow-xl bg-gradient-to-r from-emerald-800/50 to-blue-800/50 text-white">
             <CardHeader>
-              <CardTitle className="text-emerald-300">市場趨勢總結</CardTitle>
+              <CardTitle className="flex items-center gap-3 text-emerald-300">
+                <CheckCircle className="h-8 w-8" />
+                完整分析總結
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="text-center">
                   <TrendingUp className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
                   <p className="text-3xl font-bold text-white">+23%</p>
@@ -326,13 +407,24 @@ const MarketTrendAnalysis = () => {
                   <p className="text-sm text-gray-300">總討論聲量</p>
                 </div>
               </div>
-              <div className="mt-6 p-6 bg-slate-800/50 rounded-xl">
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  <strong className="text-emerald-300">市場洞察：</strong>
-                  相關產品類別在台灣市場呈現強勁成長趨勢（+23%），特別是在 Instagram 和 Dcard 平台上獲得高度關注。
-                  整體市場情緒偏向正面（73%），「復古外套」關鍵字成長最為顯著（+22%），
-                  建議針對年輕族群加強社群行銷策略，並把握春季穿搭話題熱度進行推廣。
-                </p>
+              <div className="space-y-4 p-6 bg-slate-800/50 rounded-xl">
+                <h4 className="text-lg font-bold text-emerald-300 mb-3">綜合預測建議</h4>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-sm font-semibold text-blue-300 mb-2">市場驗證結果：</p>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      外部市場趨勢與內部需求預測高度一致，相關產品類別在台灣市場呈現強勁成長趨勢（+23%），
+                      驗證了虛擬顧客代理人的預測準確性。
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-purple-300 mb-2">優化建議：</p>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      建議將預期銷量上調 15%，並重點關注 Instagram 和 Dcard 平台的行銷推廣，
+                      把握春季穿搭話題熱度進行產品推廣。
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

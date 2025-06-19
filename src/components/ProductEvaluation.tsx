@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Search, TrendingUp, Clock, DollarSign } from 'lucide-react';
+import { Search, TrendingUp, Clock, DollarSign, ArrowRight } from 'lucide-react';
 
-const ProductEvaluation = () => {
+interface ProductEvaluationProps {
+  onComplete: (data: any) => void;
+  onProceed: () => void;
+}
+
+const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onProceed }) => {
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -57,6 +61,24 @@ const ProductEvaluation = () => {
     // 模擬 API 分析延遲
     await new Promise(resolve => setTimeout(resolve, 2000));
     setResults(mockSimilarProducts);
+    
+    // Calculate baseline metrics for next step
+    const avgSalesVelocity = mockSimilarProducts.reduce((sum, p) => sum + p.salesVelocity, 0) / mockSimilarProducts.length;
+    const avgLifeCycle = mockSimilarProducts.reduce((sum, p) => sum + p.lifeCycle, 0) / mockSimilarProducts.length;
+    const avgProfit = mockSimilarProducts.reduce((sum, p) => sum + p.profit, 0) / mockSimilarProducts.length;
+    
+    const productData = {
+      name: productName,
+      description: productDescription,
+      similarProducts: mockSimilarProducts,
+      baselineMetrics: {
+        avgSalesVelocity,
+        avgLifeCycle,
+        avgProfit
+      }
+    };
+    
+    onComplete(productData);
     setIsAnalyzing(false);
   };
 
@@ -117,6 +139,7 @@ const ProductEvaluation = () => {
       {/* Results Section */}
       {results && (
         <div className="space-y-8">
+          {/* Similar Products Analysis */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-700 to-slate-600 text-white">
             <CardHeader>
               <CardTitle className="text-emerald-300">相似商品分析結果</CardTitle>
@@ -202,6 +225,27 @@ const ProductEvaluation = () => {
                   <Bar dataKey="復古牛仔上衣" fill="#10B981" />
                 </BarChart>
               </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Next Step Button */}
+          <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-800/50 to-purple-800/50 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-blue-300 mb-2">基線分析完成</h3>
+                  <p className="text-gray-300">
+                    已建立歷史商品基線數據，現在可以進行虛擬顧客代理人需求預測模擬
+                  </p>
+                </div>
+                <Button 
+                  onClick={onProceed}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white border-0 py-3 px-6 text-lg font-medium flex items-center gap-2"
+                >
+                  進行需求預測
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
