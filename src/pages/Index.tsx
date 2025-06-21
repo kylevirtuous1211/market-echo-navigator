@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import TopBanner from '@/components/TopBanner';
 import Header from '@/components/Header';
 import ProgressFlowIndicator from '@/components/ProgressFlowIndicator';
 import OverviewCards from '@/components/OverviewCards';
@@ -47,6 +48,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen gradient-warm">
+      <TopBanner />
       <Header />
       <ProgressFlowIndicator completedSteps={completedSteps} />
       
