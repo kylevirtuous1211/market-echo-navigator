@@ -349,13 +349,13 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
                 </div>
               </div>
               
-              <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
+              {/* <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
                 <h3 className="text-2xl font-bold text-emerald-700 mb-2">市場反應預測</h3>
                 <div className="flex items-center justify-center gap-4">
                   <Progress value={results.success_probability} className="flex-1 max-w-md h-4" />
                   <span className="text-3xl font-bold text-emerald-700">{results.success_probability}%</span>
                 </div>
-              </div>
+              </div> */}
 
               <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
                 <h3 className="text-2xl font-bold text-emerald-700 mb-2">進貨數量預測</h3>
