@@ -47,7 +47,8 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
     target_segments: ['時尚年輕族群', '潮流追隨者'],
     marketing_channels: ['Instagram', 'TikTok'],
     risk_factors: ['季節性波動', '競爭激烈'],
-    success_probability: 78
+    restock_min: 25,
+    restock_max: 30
   };
 
   const handleAnalyze = async () => {
@@ -349,13 +350,32 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
               </div>
               
               <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
-                <h3 className="text-2xl font-bold text-emerald-700 mb-2">成功機率預測</h3>
+                <h3 className="text-2xl font-bold text-emerald-700 mb-2">市場反應預測</h3>
                 <div className="flex items-center justify-center gap-4">
                   <Progress value={results.success_probability} className="flex-1 max-w-md h-4" />
                   <span className="text-3xl font-bold text-emerald-700">{results.success_probability}%</span>
                 </div>
+              </div>
+
+              <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
+                <h3 className="text-2xl font-bold text-emerald-700 mb-2">進貨數量預測</h3>
+                <div className="flex flex-col items-center justify-center gap-2">
+                  {/* <div className="relative w-full max-w-md h-4">
+                    <div className="absolute top-0 left-0 h-4 w-full bg-yellow-100 rounded" />
+                    <div
+                      className="absolute top-0 h-4 bg-green-500 rounded"
+                      style={{
+                        left: `${finalRecommendations.restock_min}%`,
+                        width: `${finalRecommendations.restock_max - finalRecommendations.restock_min}%`
+                      }}
+                    />
+                  </div> */}
+                  <span className="text-lg font-bold text-emerald-700">
+                    建議進貨區間：{finalRecommendations.restock_min} ~ {finalRecommendations.restock_max} 單位
+                  </span>
+                </div>
                 <p className="text-sm text-emerald-600/90 mt-3 font-medium">
-                  基於 NLP 語意比對、ABM+LLM 虛擬顧客模擬與市場趨勢驗證的綜合評估
+                  透過三階段可解釋AI，歷史資訊、代理人的模擬、市場資訊，預測商品在市場上的表現，提供建議進貨區間。
                 </p>
               </div>
               
