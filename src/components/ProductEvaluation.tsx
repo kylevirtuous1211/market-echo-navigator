@@ -6,38 +6,92 @@ import SimilarProductsAnalysis from './SimilarProductsAnalysis';
 import SalesPerformanceChart from './SalesPerformanceChart';
 import AnalysisCompleteCard from './AnalysisCompleteCard';
 import { ProductEvaluationProps } from '@/types/productEvaluation';
-import { mockSimilarProducts, chartData } from '@/data/mockData';
+import { beautyDataService, BeautyProduct } from '@/services/beautyDataService';
+import { useToast } from '@/hooks/use-toast';
 
 const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onProceed }) => {
   const [productName, setProductName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<BeautyProduct[] | null>(null);
+  const { toast } = useToast();
 
   const handleAnalyze = async () => {
+    if (!productName.trim()) {
+      toast({
+        title: "請輸入產品名稱",
+        description: "產品名稱是必填欄位",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
-    // 模擬 API 分析延遲
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setResults(mockSimilarProducts);
     
-    // Calculate baseline metrics for next step
-    const avgSalesVelocity = mockSimilarProducts.reduce((sum, p) => sum + p.salesVelocity, 0) / mockSimilarProducts.length;
-    const avgLifeCycle = mockSimilarProducts.reduce((sum, p) => sum + p.lifeCycle, 0) / mockSimilarProducts.length;
-    const avgProfit = mockSimilarProducts.reduce((sum, p) => sum + p.profit, 0) / mockSimilarProducts.length;
-    
-    const productData = {
-      name: productName,
-      description: productDescription,
-      similarProducts: mockSimilarProducts,
-      baselineMetrics: {
-        avgSalesVelocity,
-        avgLifeCycle,
-        avgProfit
+    try {
+      console.log('開始分析產品:', productName);
+      
+      // 使用產品名稱和描述搜尋相似商品
+      const searchTerms = [productName, productDescription].filter(Boolean).join(' ');
+      const similarProducts = await beautyDataService.searchSimilarProducts(searchTerms);
+      
+      console.log('找到相似商品:', similarProducts.length);
+      
+      // 如果沒有找到相似商品，嘗試按類別搜尋
+      if (similarProducts.length === 0) {
+        console.log('沒有找到相似商品，使用預設數據');
+        const allProducts = await beautyDataService.getBeautyProducts();
+        const fallbackProducts = allProducts.slice(0, 5); // 取前5個作為範例
+        setResults(fallbackProducts);
+        
+        toast({
+          title: "分析完成",
+          description: `使用系統數據庫中的範例商品進行分析`,
+        });
+      } else {
+        setResults(similarProducts);
+        toast({
+          title: "分析完成", 
+          description: `找到 ${similarProducts.length} 個相似商品`,
+        });
       }
-    };
-    
-    onComplete(productData);
-    setIsAnalyzing(false);
+      
+      // 計算基準指標
+      const baselineMetrics = await beautyDataService.calculateBaselineMetrics();
+      console.log('基準指標:', baselineMetrics);
+      
+      const productData = {
+        name: productName,
+        description: productDescription,
+        similarProducts: similarProducts.length > 0 ? similarProducts : await beautyDataService.getBeautyProducts(),
+        baselineMetrics
+      };
+      
+      onComplete(productData);
+      
+    } catch (error) {
+      console.error('分析失敗:', error);
+      toast({
+        title: "分析失敗",
+        description: "系統發生錯誤，請稍後重試",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // 將 Supabase 數據轉換為圖表格式
+  const generateChartData = (products: BeautyProduct[]) => {
+    return products.map((product, index) => ({
+      name: product.product_name.length > 15 
+        ? product.product_name.substring(0, 15) + '...' 
+        : product.product_name,
+      銷售量: product.sales_velocity,
+      利潤率: product.profit_margin,
+      生命週期: product.life_cycle_months,
+      價格: product.price
+    }));
   };
 
   return (
@@ -64,10 +118,10 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
         onAnalyze={handleAnalyze}
       />
 
-      {results && (
+      {results && results.length > 0 && (
         <div className="space-y-8">
           <SimilarProductsAnalysis results={results} />
-          <SalesPerformanceChart data={chartData} />
+          <SalesPerformanceChart data={generateChartData(results)} />
           <AnalysisCompleteCard onProceed={onProceed} />
         </div>
       )}
