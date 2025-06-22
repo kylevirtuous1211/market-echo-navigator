@@ -5,7 +5,7 @@ import ProductInputForm from './ProductInputForm';
 import SimilarProductsAnalysis from './SimilarProductsAnalysis';
 import SalesPerformanceChart from './SalesPerformanceChart';
 import AnalysisCompleteCard from './AnalysisCompleteCard';
-import { ProductEvaluationProps } from '@/types/productEvaluation';
+import { ProductEvaluationProps, SimilarProduct, ChartDataPoint } from '@/types/productEvaluation';
 import { beautyDataService, BeautyProduct } from '@/services/beautyDataService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -81,17 +81,44 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
     }
   };
 
-  // 將 Supabase 數據轉換為圖表格式
-  const generateChartData = (products: BeautyProduct[]) => {
-    return products.map((product, index) => ({
-      name: product.product_name.length > 15 
-        ? product.product_name.substring(0, 15) + '...' 
-        : product.product_name,
-      銷售量: product.sales_velocity,
-      利潤率: product.profit_margin,
-      生命週期: product.life_cycle_months,
-      價格: product.price
+  // 將 BeautyProduct 轉換為 SimilarProduct 格式
+  const convertToSimilarProducts = (products: BeautyProduct[]): SimilarProduct[] => {
+    return products.map((product) => ({
+      name: product.product_name,
+      similarity: 0.85, // 預設相似度，實際應用中可以基於搜尋演算法計算
+      salesVelocity: product.sales_velocity,
+      lifeCycle: product.life_cycle_months,
+      profit: product.profit_margin,
+      category: product.category
     }));
+  };
+
+  // 將 BeautyProduct 數據轉換為圖表格式
+  const generateChartData = (products: BeautyProduct[]): ChartDataPoint[] => {
+    // 創建月份數據，每個產品作為一個系列
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月'];
+    
+    return months.map((month, index) => {
+      const chartPoint: ChartDataPoint = {
+        month,
+        經典牛仔夾克: 0,
+        休閒丹寧外套: 0,
+        復古牛仔上衣: 0
+      };
+
+      // 根據產品數據生成模擬的月度銷售數據
+      if (products.length > 0) {
+        chartPoint.經典牛仔夾克 = Math.floor(products[0]?.sales_velocity * (0.8 + Math.random() * 0.4)) || 100;
+      }
+      if (products.length > 1) {
+        chartPoint.休閒丹寧外套 = Math.floor(products[1]?.sales_velocity * (0.8 + Math.random() * 0.4)) || 80;
+      }
+      if (products.length > 2) {
+        chartPoint.復古牛仔上衣 = Math.floor(products[2]?.sales_velocity * (0.8 + Math.random() * 0.4)) || 60;
+      }
+
+      return chartPoint;
+    });
   };
 
   return (
@@ -120,7 +147,7 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
 
       {results && results.length > 0 && (
         <div className="space-y-8">
-          <SimilarProductsAnalysis results={results} />
+          <SimilarProductsAnalysis results={convertToSimilarProducts(results)} />
           <SalesPerformanceChart data={generateChartData(results)} />
           <AnalysisCompleteCard onProceed={onProceed} />
         </div>
