@@ -6,11 +6,12 @@ import { CheckCircle } from 'lucide-react';
 import ProductEvaluation from '@/components/ProductEvaluation';
 import DemandPrediction from '@/components/DemandPrediction';
 import MarketTrendAnalysis from '@/components/MarketTrendAnalysis';
+import { BeautyProduct } from '@/services/beautyDataService';
 
 interface ProductData {
   name: string;
   description: string;
-  similarProducts: any[];
+  similarProducts: BeautyProduct[];
   baselineMetrics: {
     avgSalesVelocity: number;
     avgLifeCycle: number;
