@@ -28,7 +28,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       colorPreference: '黑色、白色',
       materialPreference: '棉質、混紡',
       response: '非常感興趣，願意嘗試新品牌',
-      count: 1250
     },
     {
       id: 2,
@@ -39,7 +38,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       colorPreference: '深藍、灰色',
       materialPreference: '純棉、優質丹寧',
       response: '重視品質與耐用性',
-      count: 980
     },
     {
       id: 3,
@@ -50,7 +48,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       colorPreference: '基本色系',
       materialPreference: '性價比材質',
       response: '需要促銷活動才會考慮',
-      count: 750
     },
     {
       id: 4,
@@ -61,7 +58,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       colorPreference: '流行色、撞色',
       materialPreference: '特殊材質、創新布料',
       response: '積極關注新品，願意早期採用',
-      count: 640
     }
   ];
 

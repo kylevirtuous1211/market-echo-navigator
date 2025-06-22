@@ -1,6 +1,7 @@
 # Welcome to your Lovable project
 
 ## Project info
+run website using `npm run dev`
 
 **URL**: https://lovable.dev/projects/ea0ca48f-65fa-4b54-bbf8-9e6d1e751b8f
 
