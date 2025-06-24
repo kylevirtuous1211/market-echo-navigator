@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw, Target, Calendar } from 'lucide-react';
 
 interface MarketTrendAnalysisProps {
   productData?: any;
@@ -21,11 +21,18 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
     quantity_max: 50,
     rating: '熱銷商品',
     rating_level: 'hot',
-    customer_segments: ['時尚年輕族群', '潮流追隨者'],
-    sentiment_summary: '正面評價占82%，主要關注品質與時尚感',
+    customer_segments: ['時尚年輕族群', '潮流追隨者', '品質重視者'],
+    sentiment_summary: '正面評價占82%，主要關注品質與時尚感。消費者特別讚賞產品的耐用性和設計美感。',
     similar_products_avg: 42,
-    restock_cycle: '短期補貨',
-    restock_frequency: '建議每7-10天補貨一次'
+    restock_cycle_type: 'short_term',
+    short_term_days: '7-10天',
+    long_term_days: '15-20天',
+    recommended_cycle: '短期補貨',
+    customer_simulation: {
+      purchase_intent: 85,
+      repeat_purchase: 72,
+      word_of_mouth: 78
+    }
   };
 
   const handleAnalyze = async () => {
@@ -97,99 +104,195 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
       {/* Final Results */}
       {results && (
         <div className="space-y-6">
-          {/* Main Recommendation Card */}
+          {/* Header Card with Rating */}
           <Card className="card-glass shadow-warm border border-emerald-200/50 bg-gradient-to-br from-emerald-50/50 to-blue-50/50">
-            <CardHeader className="text-center pb-4">
+            <CardHeader className="text-center pb-6">
               <div className="flex justify-center mb-4">
-                <Badge className={`${getRatingColor(results.rating_level)} px-4 py-2 text-lg font-bold flex items-center gap-2`}>
+                <Badge className={`${getRatingColor(results.rating_level)} px-6 py-3 text-xl font-bold flex items-center gap-3`}>
                   {getRatingIcon(results.rating_level)}
                   {results.rating}
                 </Badge>
               </div>
-              <CardTitle className="text-3xl font-bold text-emerald-700">給客戶的回饋</CardTitle>
+              <CardTitle className="text-4xl font-bold text-emerald-700 mb-2">客戶反饋報告</CardTitle>
+              <p className="text-emerald-600/80 text-lg">基於AI多維度分析的完整建議方案</p>
             </CardHeader>
-            <CardContent className="space-y-8">
+          </Card>
+
+          {/* Quantity Recommendation - Prominent */}
+          <Card className="card-glass shadow-warm border border-emerald-300/50">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="p-4 bg-emerald-500/20 rounded-full">
+                    <Package className="h-16 w-16 text-emerald-600" />
+                  </div>
+                </div>
+                <h3 className="text-3xl font-bold text-emerald-700 mb-4">建議進貨數量</h3>
+                <div className="text-6xl font-bold text-emerald-800 mb-4">
+                  {results.quantity_min} - {results.quantity_max}
+                  <span className="text-2xl ml-2">件</span>
+                </div>
+                <p className="text-emerald-600/80 text-lg font-medium">
+                  基於市場需求預測與風險評估的最佳進貨區間
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary Analysis */}
+          <Card className="card-glass shadow-warm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-blue-700 text-2xl">
+                <MessageSquare className="h-7 w-7" />
+                綜合分析摘要
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
               
-              {/* Quantity Recommendation */}
-              <div className="text-center p-6 bg-white/70 rounded-xl border border-emerald-200/50">
-                <div className="flex justify-center mb-4">
-                  <Package className="h-12 w-12 text-emerald-600" />
+              {/* Customer Segments */}
+              <div className="p-6 bg-blue-50/70 rounded-xl border border-blue-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Users className="h-6 w-6 text-blue-600" />
+                  <h3 className="text-xl font-bold text-blue-700">主要客群模擬</h3>
                 </div>
-                <h3 className="text-2xl font-bold text-emerald-700 mb-2">建議進貨數量</h3>
-                <div className="text-4xl font-bold text-emerald-800 mb-2">
-                  {results.quantity_min} - {results.quantity_max} 件
-                </div>
-                <p className="text-emerald-600/80">基於市場需求預測的最佳進貨區間</p>
-              </div>
-
-              {/* Summary Analysis */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 bg-white/70 rounded-xl border border-blue-200/50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Users className="h-6 w-6 text-blue-600" />
-                    <h3 className="text-xl font-bold text-blue-700">主要客群</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.purchase_intent}%</div>
+                    <div className="text-blue-600 font-medium">購買意向</div>
                   </div>
-                  <div className="space-y-2">
-                    {results.customer_segments.map((segment, index) => (
-                      <Badge key={index} variant="outline" className="mr-2 mb-2 text-blue-700 border-blue-300">
-                        {segment}
-                      </Badge>
-                    ))}
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.repeat_purchase}%</div>
+                    <div className="text-blue-600 font-medium">回購率</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.word_of_mouth}%</div>
+                    <div className="text-blue-600 font-medium">口碑推薦</div>
                   </div>
                 </div>
-
-                <div className="p-6 bg-white/70 rounded-xl border border-purple-200/50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <MessageSquare className="h-6 w-6 text-purple-600" />
-                    <h3 className="text-xl font-bold text-purple-700">輿情分析</h3>
-                  </div>
-                  <p className="text-purple-700 font-medium">{results.sentiment_summary}</p>
+                <div className="flex flex-wrap gap-2">
+                  {results.customer_segments.map((segment, index) => (
+                    <Badge key={index} variant="outline" className="text-blue-700 border-blue-300 px-3 py-1">
+                      {segment}
+                    </Badge>
+                  ))}
                 </div>
               </div>
 
-              {/* Similar Products & Restock Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-6 bg-white/70 rounded-xl border border-amber-200/50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <BarChart3 className="h-6 w-6 text-amber-600" />
-                    <h3 className="text-xl font-bold text-amber-700">相似商品平均</h3>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-amber-800 mb-2">
-                      {results.similar_products_avg} 件/月
-                    </div>
-                    <p className="text-amber-600/80">同類商品平均銷售表現</p>
-                  </div>
+              {/* Sentiment Analysis */}
+              <div className="p-6 bg-purple-50/70 rounded-xl border border-purple-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Heart className="h-6 w-6 text-purple-600" />
+                  <h3 className="text-xl font-bold text-purple-700">輿情分析結果</h3>
                 </div>
+                <p className="text-purple-700 font-medium text-lg leading-relaxed">
+                  {results.sentiment_summary}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-                <div className="p-6 bg-white/70 rounded-xl border border-rose-200/50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <RefreshCw className="h-6 w-6 text-rose-600" />
-                    <h3 className="text-xl font-bold text-rose-700">補貨週期</h3>
+          {/* Market Data & Restock Recommendations */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Similar Products Average */}
+            <Card className="card-glass shadow-warm border border-amber-200/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-amber-700">
+                  <BarChart3 className="h-6 w-6" />
+                  相似商品表現
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-amber-800 mb-2">
+                    {results.similar_products_avg}
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-rose-600" />
-                      <Badge className="bg-rose-500 text-white px-3 py-1">
-                        {results.restock_cycle}
-                      </Badge>
-                    </div>
-                    <p className="text-rose-700 font-medium">
-                      {results.restock_frequency}
+                  <div className="text-lg text-amber-600 font-medium mb-3">件/月 平均銷量</div>
+                  <div className="p-3 bg-amber-50/70 rounded-lg">
+                    <p className="text-amber-700 text-sm">
+                      同類商品市場平均表現，為您的定價和庫存策略提供參考基準
                     </p>
                   </div>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Final Status */}
-              <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <CheckCircle className="h-8 w-8 text-emerald-500" />
-                  <h3 className="text-2xl font-bold text-emerald-700">分析完成</h3>
+            {/* Restock Recommendations */}
+            <Card className="card-glass shadow-warm border border-rose-200/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-rose-700">
+                  <RefreshCw className="h-6 w-6" />
+                  補貨週期建議
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  
+                  {/* Recommended Cycle */}
+                  <div className="text-center mb-4">
+                    <Badge className="bg-rose-500 text-white px-4 py-2 text-lg font-bold">
+                      推薦：{results.recommended_cycle}
+                    </Badge>
+                  </div>
+
+                  {/* Cycle Options */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-rose-50/70 rounded-lg border border-rose-200/50">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-rose-600" />
+                        <span className="font-medium text-rose-700">短期補貨</span>
+                      </div>
+                      <Badge variant="outline" className="text-rose-700 border-rose-300">
+                        每 {results.short_term_days}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg border border-gray-200/50">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-gray-600" />
+                        <span className="font-medium text-gray-700">長期補貨</span>
+                      </div>
+                      <Badge variant="outline" className="text-gray-700 border-gray-300">
+                        每 {results.long_term_days}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-rose-50/50 rounded-lg mt-4">
+                    <p className="text-rose-700 text-sm text-center">
+                      建議採用短期補貨策略，確保庫存充足並降低滯銷風險
+                    </p>
+                  </div>
                 </div>
-                <p className="text-emerald-700 font-medium text-lg">
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Final Status */}
+          <Card className="card-glass shadow-warm bg-gradient-to-br from-emerald-50/80 to-blue-50/80 border border-emerald-200/50">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <CheckCircle className="h-12 w-12 text-emerald-500" />
+                  <h3 className="text-3xl font-bold text-emerald-700">分析報告完成</h3>
+                </div>
+                <p className="text-emerald-700 font-medium text-xl mb-4">
                   基於三階段可解釋AI分析，提供完整商品評估建議
                 </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">新品評估</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">需求預測</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">市場驗證</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
