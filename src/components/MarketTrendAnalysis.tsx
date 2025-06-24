@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw, Target, Calendar } from 'lucide-react';
+import SearchTrendChart from './SearchTrendChart';
+import SearchChannelBreakdown from './SearchChannelBreakdown';
 
 interface MarketTrendAnalysisProps {
   productData?: any;
@@ -15,6 +17,122 @@ interface MarketTrendAnalysisProps {
 const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, demandData, onComplete }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
+
+  // Mock data for search trends
+  const mockSearchTrendsData = [
+    { month: '2024-01', search_volume: 12500, trend_score: 65.2, engagement_rate: 3.8 },
+    { month: '2024-02', search_volume: 15800, trend_score: 72.1, engagement_rate: 4.2 },
+    { month: '2024-03', search_volume: 18200, trend_score: 78.5, engagement_rate: 4.7 },
+    { month: '2024-04', search_volume: 22100, trend_score: 85.3, engagement_rate: 5.1 },
+    { month: '2024-05', search_volume: 19800, trend_score: 80.2, engagement_rate: 4.9 },
+    { month: '2024-06', search_volume: 25600, trend_score: 92.1, engagement_rate: 5.8 },
+    { month: '2024-07', search_volume: 28400, trend_score: 95.7, engagement_rate: 6.2 },
+    { month: '2024-08', search_volume: 26800, trend_score: 89.4, engagement_rate: 5.9 },
+    { month: '2024-09', search_volume: 31200, trend_score: 98.2, engagement_rate: 6.5 },
+    { month: '2024-10', search_volume: 29600, trend_score: 94.8, engagement_rate: 6.1 },
+    { month: '2024-11', search_volume: 33800, trend_score: 101.5, engagement_rate: 7.2 },
+    { month: '2024-12', search_volume: 36500, trend_score: 105.3, engagement_rate: 7.8 }
+  ];
+
+  // Mock data for channel breakdown
+  const mockChannelData = [
+    {
+      platform: 'TikTok',
+      search_volume: 8500,
+      engagement_rate: 12.5,
+      sentiment_score: 78.3,
+      trending_hashtags: ['時尚穿搭', '牛仔風格', '復古潮流'],
+      user_demographics: {
+        age_group: '18-25歲',
+        gender_split: { male: 35, female: 65 },
+        primary_interests: ['時尚', '潮流', '穿搭']
+      }
+    },
+    {
+      platform: 'Instagram',
+      search_volume: 7200,
+      engagement_rate: 8.9,
+      sentiment_score: 82.1,
+      trending_hashtags: ['牛仔夾克', '街頭風格', 'OOTD'],
+      user_demographics: {
+        age_group: '22-35歲',
+        gender_split: { male: 40, female: 60 },
+        primary_interests: ['時尚', '攝影', '生活風格']
+      }
+    },
+    {
+      platform: 'YouTube',
+      search_volume: 5800,
+      engagement_rate: 6.2,
+      sentiment_score: 75.6,
+      trending_hashtags: ['穿搭教學', '時尚開箱', '造型技巧'],
+      user_demographics: {
+        age_group: '20-30歲',
+        gender_split: { male: 45, female: 55 },
+        primary_interests: ['教學', '時尚', '評測']
+      }
+    },
+    {
+      platform: 'Facebook',
+      search_volume: 4100,
+      engagement_rate: 4.7,
+      sentiment_score: 71.2,
+      trending_hashtags: ['經典時尚', '牛仔文化', '復古風格'],
+      user_demographics: {
+        age_group: '25-45歲',
+        gender_split: { male: 48, female: 52 },
+        primary_interests: ['時尚', '生活', '分享']
+      }
+    },
+    {
+      platform: 'Pinterest',
+      search_volume: 3900,
+      engagement_rate: 5.3,
+      sentiment_score: 85.7,
+      trending_hashtags: ['穿搭靈感', '時尚搭配', '風格指南'],
+      user_demographics: {
+        age_group: '25-40歲',
+        gender_split: { male: 25, female: 75 },
+        primary_interests: ['時尚', '設計', '靈感']
+      }
+    },
+    {
+      platform: 'Twitter',
+      search_volume: 3200,
+      engagement_rate: 7.1,
+      sentiment_score: 68.9,
+      trending_hashtags: ['時尚討論', '穿搭分享', '潮流趨勢'],
+      user_demographics: {
+        age_group: '20-35歲',
+        gender_split: { male: 52, female: 48 },
+        primary_interests: ['新聞', '討論', '時尚']
+      }
+    },
+    {
+      platform: 'LinkedIn',
+      search_volume: 1800,
+      engagement_rate: 3.2,
+      sentiment_score: 77.4,
+      trending_hashtags: ['商務穿搭', '職場風格', '專業形象'],
+      user_demographics: {
+        age_group: '25-45歲',
+        gender_split: { male: 55, female: 45 },
+        primary_interests: ['職業', '商務', '專業']
+      }
+    },
+    {
+      platform: 'Reddit',
+      search_volume: 2400,
+      engagement_rate: 9.8,
+      sentiment_score: 72.8,
+      trending_hashtags: ['時尚建議', '穿搭評價', '品牌討論'],
+      user_demographics: {
+        age_group: '18-30歲',
+        gender_split: { male: 60, female: 40 },
+        primary_interests: ['討論', '評價', '建議']
+      }
+    }
+  ];
 
   const finalRecommendations = {
     quantity_min: 30,
@@ -32,13 +150,25 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
       purchase_intent: 85,
       repeat_purchase: 72,
       word_of_mouth: 78
-    }
+    },
+    search_trends: mockSearchTrendsData,
+    channel_breakdown: mockChannelData
   };
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
     await new Promise(resolve => setTimeout(resolve, 3000));
     setResults(finalRecommendations);
+    
+    // Store the complete analysis results including search trends
+    const analysisData = {
+      ...finalRecommendations,
+      productData,
+      demandData,
+      analysisTimestamp: new Date().toISOString()
+    };
+    localStorage.setItem('marketAnalysisData', JSON.stringify(analysisData));
+    
     onComplete();
     setIsAnalyzing(false);
   };
@@ -101,9 +231,21 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
         </CardContent>
       </Card>
 
-      {/* Final Results */}
+      {/* Search Trends and Channel Analysis */}
       {results && (
         <div className="space-y-6">
+          {/* Search Trend Chart */}
+          <SearchTrendChart 
+            productName={productData?.name || "時尚牛仔夾克"}
+            data={results.search_trends}
+          />
+
+          {/* Channel Breakdown */}
+          <SearchChannelBreakdown 
+            productName={productData?.name || "時尚牛仔夾克"}
+            channelData={results.channel_breakdown}
+          />
+
           {/* Header Card with Rating */}
           <Card className="card-glass shadow-warm border border-emerald-200/50 bg-gradient-to-br from-emerald-50/50 to-blue-50/50">
             <CardHeader className="text-center pb-6">
