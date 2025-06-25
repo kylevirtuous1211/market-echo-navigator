@@ -2,34 +2,39 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Users, Heart, ArrowRight } from 'lucide-react';
+import { Users, Heart, ArrowRight } from 'lucide-react';
 
 interface DemandSummaryProps {
   onProceed: () => void;
+  customerResults?: any[];
 }
 
-const DemandSummary: React.FC<DemandSummaryProps> = ({ onProceed }) => {
+const DemandSummary: React.FC<DemandSummaryProps> = ({ onProceed, customerResults }) => {
+  // Calculate averages from customer results
+  const avgPurchaseIntent = customerResults && customerResults.length > 0 
+    ? Math.round(customerResults.reduce((sum, customer) => sum + customer.purchaseIntention, 0) / customerResults.length)
+    : 67.5;
+    
+  const avgPriceSensitivity = customerResults && customerResults.length > 0
+    ? Math.round(customerResults.reduce((sum, customer) => sum + customer.priceSensitivity, 0) / customerResults.length)
+    : 51.3;
+
   return (
     <Card className="card-glass shadow-warm border border-emerald-200/50">
       <CardHeader>
         <CardTitle className="text-emerald-600">動態需求預測總結</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="text-center">
-            <DollarSign className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
-            <p className="text-3xl font-bold text-emerald-700">2,475</p>
-            <p className="text-sm text-emerald-600/80">預期首月總銷量 (件)</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="text-center">
             <Users className="h-10 w-10 text-blue-500 mx-auto mb-3" />
-            <p className="text-3xl font-bold text-emerald-700">67.5%</p>
-            <p className="text-sm text-emerald-600/80">整體購買意願</p>
+            <p className="text-3xl font-bold text-emerald-700">{avgPurchaseIntent}%</p>
+            <p className="text-sm text-emerald-600/80">平均購買意願</p>
           </div>
           <div className="text-center">
             <Heart className="h-10 w-10 text-red-500 mx-auto mb-3" />
-            <p className="text-3xl font-bold text-emerald-700">35%</p>
-            <p className="text-sm text-emerald-600/80">主力客群佔比</p>
+            <p className="text-3xl font-bold text-emerald-700">{avgPriceSensitivity}%</p>
+            <p className="text-sm text-emerald-600/80">平均價格敏感度</p>
           </div>
         </div>
         

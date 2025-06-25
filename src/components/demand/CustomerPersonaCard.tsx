@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
-import { Users, Palette, Shirt, Heart } from 'lucide-react';
+import { Users, Heart } from 'lucide-react';
 
 interface CustomerPersona {
   id: number;
@@ -9,8 +9,6 @@ interface CustomerPersona {
   age: string;
   purchaseIntention: number;
   priceSensitivity: number;
-  colorPreference: string;
-  materialPreference: string;
   response: string;
 }
 
@@ -45,24 +43,6 @@ const CustomerPersonaCard: React.FC<CustomerPersonaCardProps> = ({ customer }) =
           <div className="flex items-center gap-3">
             <Progress value={customer.priceSensitivity} className="flex-1 h-3" />
             <span className="text-sm font-semibold text-rose-700 min-w-[3rem]">{customer.priceSensitivity}%</span>
-          </div>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-        <div className="flex items-center gap-3">
-          <Palette className="h-5 w-5 text-purple-500" />
-          <div>
-            <p className="text-sm text-rose-600/70">顏色偏好</p>
-            <p className="font-medium text-rose-700">{customer.colorPreference}</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <Shirt className="h-5 w-5 text-emerald-500" />
-          <div>
-            <p className="text-sm text-rose-600/70">材質偏好</p>
-            <p className="font-medium text-rose-700">{customer.materialPreference}</p>
           </div>
         </div>
       </div>

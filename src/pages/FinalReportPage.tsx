@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users, TrendingUp, CheckCircle, ArrowLeft, RefreshCw, Package, MessageSquare, Heart, Target, Calendar, Globe } from 'lucide-react';
 import TopBanner from '@/components/TopBanner';
 import Header from '@/components/Header';
-import SearchTrendChart from '@/components/SearchTrendChart';
+import SearchVolumeChart from '@/components/SearchVolumeChart';
+import TrendScoreChart from '@/components/TrendScoreChart';
+import EngagementRateChart from '@/components/EngagementRateChart';
 import SearchChannelBreakdown from '@/components/SearchChannelBreakdown';
 
 const FinalReportPage = () => {
@@ -106,9 +108,9 @@ const FinalReportPage = () => {
                   </CardHeader>
                   <CardContent className="text-center">
                     <div className="text-2xl font-bold text-amber-700 mb-2">
-                      {demandData?.overallIntent || 85}%
+                      {demandData?.avgPurchaseIntent || 67}%
                     </div>
-                    <p className="text-amber-600/70">整體購買意願</p>
+                    <p className="text-amber-600/70">平均購買意願</p>
                   </CardContent>
                 </Card>
 
@@ -126,12 +128,24 @@ const FinalReportPage = () => {
                 </Card>
               </div>
 
-              {/* Search Trends Section */}
+              {/* Three Separate Charts */}
               {marketAnalysisData?.search_trends && (
-                <SearchTrendChart 
-                  productName={productData?.name || "時尚牛仔夾克"}
-                  data={marketAnalysisData.search_trends}
-                />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <SearchVolumeChart 
+                    productName={productData?.name || "時尚牛仔夾克"}
+                    data={marketAnalysisData.search_trends}
+                  />
+                  
+                  <TrendScoreChart 
+                    productName={productData?.name || "時尚牛仔夾克"}
+                    data={marketAnalysisData.search_trends}
+                  />
+                  
+                  <EngagementRateChart 
+                    productName={productData?.name || "時尚牛仔夾克"}
+                    data={marketAnalysisData.search_trends}
+                  />
+                </div>
               )}
 
               {/* Channel Breakdown Section */}
@@ -190,30 +204,24 @@ const FinalReportPage = () => {
                     </CardHeader>
                     <CardContent className="space-y-6">
                       
-                      {/* Customer Segments */}
+                      {/* Customer Segments with matching second stage data */}
                       <div className="p-6 bg-blue-50/70 rounded-xl border border-blue-200/50">
                         <div className="flex items-center gap-3 mb-4">
                           <Users className="h-6 w-6 text-blue-600" />
-                          <h3 className="text-xl font-bold text-blue-700">主要客群模擬</h3>
+                          <h3 className="text-xl font-bold text-blue-700">客群模擬分析</h3>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div className="text-center p-4 bg-white/70 rounded-lg">
                             <div className="text-2xl font-bold text-blue-800">
-                              {marketAnalysisData.customer_simulation?.purchase_intent || 85}%
+                              {marketAnalysisData.customer_simulation?.purchase_intent || demandData?.avgPurchaseIntent || 67}%
                             </div>
-                            <div className="text-blue-600 font-medium">購買意向</div>
+                            <div className="text-blue-600 font-medium">購買意願</div>
                           </div>
                           <div className="text-center p-4 bg-white/70 rounded-lg">
                             <div className="text-2xl font-bold text-blue-800">
-                              {marketAnalysisData.customer_simulation?.repeat_purchase || 72}%
+                              {marketAnalysisData.customer_simulation?.price_sensitivity || demandData?.avgPriceSensitivity || 49}%
                             </div>
-                            <div className="text-blue-600 font-medium">回購率</div>
-                          </div>
-                          <div className="text-center p-4 bg-white/70 rounded-lg">
-                            <div className="text-2xl font-bold text-blue-800">
-                              {marketAnalysisData.customer_simulation?.word_of_mouth || 78}%
-                            </div>
-                            <div className="text-blue-600 font-medium">口碑推薦</div>
+                            <div className="text-blue-600 font-medium">價格敏感度</div>
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-2">

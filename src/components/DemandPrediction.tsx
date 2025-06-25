@@ -23,8 +23,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       age: '20-30歲',
       purchaseIntention: 78,
       priceSensitivity: 45,
-      colorPreference: '黑色、白色',
-      materialPreference: '棉質、混紡',
       response: '非常感興趣，願意嘗試新品牌',
     },
     {
@@ -33,8 +31,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       age: '30-45歲',
       purchaseIntention: 65,
       priceSensitivity: 30,
-      colorPreference: '深藍、灰色',
-      materialPreference: '純棉、優質丹寧',
       response: '重視品質與耐用性',
     },
     {
@@ -43,8 +39,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       age: '25-40歲',
       purchaseIntention: 45,
       priceSensitivity: 85,
-      colorPreference: '基本色系',
-      materialPreference: '性價比材質',
       response: '需要促銷活動才會考慮',
     },
     {
@@ -53,8 +47,6 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       age: '18-28歲',
       purchaseIntention: 82,
       priceSensitivity: 35,
-      colorPreference: '流行色、撞色',
-      materialPreference: '特殊材質、創新布料',
       response: '積極關注新品，願意早期採用',
     }
   ];
@@ -65,11 +57,15 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
     await new Promise(resolve => setTimeout(resolve, 3000));
     setResults(virtualCustomers);
     
+    // Calculate averages for demand data
+    const avgPurchaseIntent = Math.round(virtualCustomers.reduce((sum, customer) => sum + customer.purchaseIntention, 0) / virtualCustomers.length);
+    const avgPriceSensitivity = Math.round(virtualCustomers.reduce((sum, customer) => sum + customer.priceSensitivity, 0) / virtualCustomers.length);
+    
     // Prepare demand data for next step
     const demandData = {
-      totalDemand: 2475,
+      avgPurchaseIntent,
+      avgPriceSensitivity,
       segments: virtualCustomers,
-      overallIntent: 67.5,
       marketShare: [
         { name: '時尚年輕族群', value: 35, color: '#3B82F6' },
         { name: '品質導向消費者', value: 23, color: '#8B5CF6' },
@@ -98,7 +94,7 @@ const DemandPrediction: React.FC<DemandPredictionProps> = ({ productData, onComp
       {results && (
         <div className="space-y-8">
           <CustomerPersonasAnalysis results={results} />
-          <DemandSummary onProceed={onProceed} />
+          <DemandSummary onProceed={onProceed} customerResults={results} />
         </div>
       )}
     </div>

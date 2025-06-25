@@ -1,11 +1,12 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw, Target, Calendar } from 'lucide-react';
-import SearchTrendChart from './SearchTrendChart';
+import SearchVolumeChart from './SearchVolumeChart';
+import TrendScoreChart from './TrendScoreChart';
+import EngagementRateChart from './EngagementRateChart';
 import SearchChannelBreakdown from './SearchChannelBreakdown';
 
 interface MarketTrendAnalysisProps {
@@ -147,9 +148,8 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
     long_term_days: '15-20天',
     recommended_cycle: '短期補貨',
     customer_simulation: {
-      purchase_intent: 85,
-      repeat_purchase: 72,
-      word_of_mouth: 78
+      purchase_intent: demandData?.avgPurchaseIntent || 85,
+      price_sensitivity: demandData?.avgPriceSensitivity || 72
     },
     search_trends: mockSearchTrendsData,
     channel_breakdown: mockChannelData
@@ -234,11 +234,23 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
       {/* Search Trends and Channel Analysis */}
       {results && (
         <div className="space-y-6">
-          {/* Search Trend Chart */}
-          <SearchTrendChart 
-            productName={productData?.name || "時尚牛仔夾克"}
-            data={results.search_trends}
-          />
+          {/* Three Separate Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <SearchVolumeChart 
+              productName={productData?.name || "時尚牛仔夾克"}
+              data={results.search_trends}
+            />
+            
+            <TrendScoreChart 
+              productName={productData?.name || "時尚牛仔夾克"}
+              data={results.search_trends}
+            />
+            
+            <EngagementRateChart 
+              productName={productData?.name || "時尚牛仔夾克"}
+              data={results.search_trends}
+            />
+          </div>
 
           {/* Channel Breakdown */}
           <SearchChannelBreakdown 
