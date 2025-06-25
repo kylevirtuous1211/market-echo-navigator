@@ -87,9 +87,9 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
       name: product.product_name,
       similarity: 0.85, // 預設相似度，實際應用中可以基於搜尋演算法計算
       salesVelocity: product.sales_velocity,
-      lifeCycle: product.life_cycle_months,
+      lifeCycle: 12, 
       profit: product.profit_margin,
-      category: product.category
+      category: product.brand
     }));
   };
 

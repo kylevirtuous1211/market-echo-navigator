@@ -5,21 +5,12 @@ export interface BeautyProduct {
   id: string;
   product_name: string;
   brand: string;
-  category: string;
-  subcategory?: string;
   description?: string;
   price: number;
   cost: number;
   sales_velocity: number;
-  life_cycle_months: number;
   profit_margin: number;
   inventory_level?: number;
-  launch_date?: string;
-  target_age_group?: string;
-  skin_type?: string;
-  ingredients?: any;
-  certifications?: string[];
-  packaging_type?: string;
 }
 
 export interface SentimentAnalysis {
@@ -58,11 +49,12 @@ export interface AgentSimulation {
 
 export const beautyDataService = {
   // 獲取美妝商品歷史數據
+  // ✅ Fixed: Only select existing columns
   async getBeautyProducts(): Promise<BeautyProduct[]> {
     const { data, error } = await supabase
       .from('beauty_products_history')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('id, product_name, brand, description, price, cost, sales_velocity, profit_margin, inventory_level')
+      .order('sales_velocity', { ascending: false });
 
     if (error) {
       console.error('Error fetching beauty products:', error);

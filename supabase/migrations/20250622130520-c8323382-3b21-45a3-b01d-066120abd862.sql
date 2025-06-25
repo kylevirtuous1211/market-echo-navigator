@@ -4,24 +4,12 @@ CREATE TABLE public.beauty_products_history (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   product_name TEXT NOT NULL,
   brand TEXT NOT NULL,
-  category TEXT NOT NULL, -- 例如：面部護理、彩妝、香水、身體護理
-  subcategory TEXT, -- 例如：精華液、口紅、眼影、面膜
   description TEXT,
   price DECIMAL(10,2) NOT NULL,
   cost DECIMAL(10,2) NOT NULL,
   sales_velocity INTEGER NOT NULL, -- 每月銷售量
-  life_cycle_months INTEGER NOT NULL, -- 生命週期（月）
   profit_margin DECIMAL(5,2) NOT NULL, -- 利潤率百分比
-  inventory_level INTEGER DEFAULT 0,
-  launch_date DATE,
-  seasonal_factor DECIMAL(3,2) DEFAULT 1.0, -- 季節性因子
-  target_age_group TEXT, -- 例如：18-25, 26-35, 36-45
-  skin_type TEXT, -- 例如：油性、乾性、混合性、敏感性
-  ingredients JSONB, -- 主要成分清單
-  certifications TEXT[], -- 例如：有機認證、無動物測試
-  packaging_type TEXT, -- 包裝類型
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+  inventory_level INTEGER DEFAULT 0
 );
 
 -- 輿情分析模組 (Web Search Module) - 靜態輿情情感數據
