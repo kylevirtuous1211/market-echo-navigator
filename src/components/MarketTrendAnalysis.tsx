@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw, Target, Calendar } from 'lucide-react';
+import SearchTrendChart from './SearchTrendChart';
+import SearchChannelBreakdown from './SearchChannelBreakdown';
 
 interface MarketTrendAnalysisProps {
   productData?: any;
@@ -17,46 +18,177 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
 
-  // Mock external data sources
-  const googleTrendsData = [
-    { month: '1月', 牛仔外套: 65, 時尚外套: 78, 春季外套: 45 },
-    { month: '2月', 牛仔外套: 72, 時尚外套: 85, 春季外套: 52 },
-    { month: '3月', 牛仔外套: 88, 時尚外套: 92, 春季外套: 78 },
-    { month: '4月', 牛仔外套: 95, 時尚外套: 88, 春季外套: 85 },
-    { month: '5月', 牛仔外套: 82, 時尚外套: 75, 春季外套: 92 },
-    { month: '6月', 牛仔外套: 68, 時尚外套: 65, 春季外套: 88 }
+  // Mock data for search trends
+  const mockSearchTrendsData = [
+    { month: '2024-01', search_volume: 12500, trend_score: 65.2, engagement_rate: 3.8 },
+    { month: '2024-02', search_volume: 15800, trend_score: 72.1, engagement_rate: 4.2 },
+    { month: '2024-03', search_volume: 18200, trend_score: 78.5, engagement_rate: 4.7 },
+    { month: '2024-04', search_volume: 22100, trend_score: 85.3, engagement_rate: 5.1 },
+    { month: '2024-05', search_volume: 19800, trend_score: 80.2, engagement_rate: 4.9 },
+    { month: '2024-06', search_volume: 25600, trend_score: 92.1, engagement_rate: 5.8 },
+    { month: '2024-07', search_volume: 28400, trend_score: 95.7, engagement_rate: 6.2 },
+    { month: '2024-08', search_volume: 26800, trend_score: 89.4, engagement_rate: 5.9 },
+    { month: '2024-09', search_volume: 31200, trend_score: 98.2, engagement_rate: 6.5 },
+    { month: '2024-10', search_volume: 29600, trend_score: 94.8, engagement_rate: 6.1 },
+    { month: '2024-11', search_volume: 33800, trend_score: 101.5, engagement_rate: 7.2 },
+    { month: '2024-12', search_volume: 36500, trend_score: 105.3, engagement_rate: 7.8 }
   ];
 
-  const socialMediaData = [
-    { platform: 'Instagram', 提及次數: 1250, 正面情緒: 78 },
-    { platform: 'Facebook', 提及次數: 890, 正面情緒: 65 },
-    { platform: 'TikTok', 提及次數: 2100, 正面情緒: 82 },
-    { platform: 'Twitter', 提及次數: 650, 正面情緒: 71 }
-  ];
-
-  const competitorAnalysis = [
-    { brand: 'Uniqlo', 市場份額: 25, 價格區間: 'NT$1,200-2,500', 趨勢: 'up' },
-    { brand: 'H&M', 市場份額: 18, 價格區間: 'NT$800-1,800', 趨勢: 'stable' },
-    { brand: 'Zara', 市場份額: 22, 價格區間: 'NT$1,500-3,000', 趨勢: 'up' },
-    { brand: 'GAP', 市場份額: 15, 價格區間: 'NT$1,800-3,500', 趨勢: 'down' }
+  // Mock data for channel breakdown
+  const mockChannelData = [
+    {
+      platform: 'TikTok',
+      search_volume: 8500,
+      engagement_rate: 12.5,
+      sentiment_score: 78.3,
+      trending_hashtags: ['時尚穿搭', '牛仔風格', '復古潮流'],
+      user_demographics: {
+        age_group: '18-25歲',
+        gender_split: { male: 35, female: 65 },
+        primary_interests: ['時尚', '潮流', '穿搭']
+      }
+    },
+    {
+      platform: 'Instagram',
+      search_volume: 7200,
+      engagement_rate: 8.9,
+      sentiment_score: 82.1,
+      trending_hashtags: ['牛仔夾克', '街頭風格', 'OOTD'],
+      user_demographics: {
+        age_group: '22-35歲',
+        gender_split: { male: 40, female: 60 },
+        primary_interests: ['時尚', '攝影', '生活風格']
+      }
+    },
+    {
+      platform: 'YouTube',
+      search_volume: 5800,
+      engagement_rate: 6.2,
+      sentiment_score: 75.6,
+      trending_hashtags: ['穿搭教學', '時尚開箱', '造型技巧'],
+      user_demographics: {
+        age_group: '20-30歲',
+        gender_split: { male: 45, female: 55 },
+        primary_interests: ['教學', '時尚', '評測']
+      }
+    },
+    {
+      platform: 'Facebook',
+      search_volume: 4100,
+      engagement_rate: 4.7,
+      sentiment_score: 71.2,
+      trending_hashtags: ['經典時尚', '牛仔文化', '復古風格'],
+      user_demographics: {
+        age_group: '25-45歲',
+        gender_split: { male: 48, female: 52 },
+        primary_interests: ['時尚', '生活', '分享']
+      }
+    },
+    {
+      platform: 'Pinterest',
+      search_volume: 3900,
+      engagement_rate: 5.3,
+      sentiment_score: 85.7,
+      trending_hashtags: ['穿搭靈感', '時尚搭配', '風格指南'],
+      user_demographics: {
+        age_group: '25-40歲',
+        gender_split: { male: 25, female: 75 },
+        primary_interests: ['時尚', '設計', '靈感']
+      }
+    },
+    {
+      platform: 'Twitter',
+      search_volume: 3200,
+      engagement_rate: 7.1,
+      sentiment_score: 68.9,
+      trending_hashtags: ['時尚討論', '穿搭分享', '潮流趨勢'],
+      user_demographics: {
+        age_group: '20-35歲',
+        gender_split: { male: 52, female: 48 },
+        primary_interests: ['新聞', '討論', '時尚']
+      }
+    },
+    {
+      platform: 'LinkedIn',
+      search_volume: 1800,
+      engagement_rate: 3.2,
+      sentiment_score: 77.4,
+      trending_hashtags: ['商務穿搭', '職場風格', '專業形象'],
+      user_demographics: {
+        age_group: '25-45歲',
+        gender_split: { male: 55, female: 45 },
+        primary_interests: ['職業', '商務', '專業']
+      }
+    },
+    {
+      platform: 'Reddit',
+      search_volume: 2400,
+      engagement_rate: 9.8,
+      sentiment_score: 72.8,
+      trending_hashtags: ['時尚建議', '穿搭評價', '品牌討論'],
+      user_demographics: {
+        age_group: '18-30歲',
+        gender_split: { male: 60, female: 40 },
+        primary_interests: ['討論', '評價', '建議']
+      }
+    }
   ];
 
   const finalRecommendations = {
-    optimal_price: 'NT$1,800-2,200',
-    launch_timing: '3-4月 (春季高峰)',
-    target_segments: ['時尚年輕族群', '潮流追隨者'],
-    marketing_channels: ['Instagram', 'TikTok'],
-    risk_factors: ['季節性波動', '競爭激烈'],
-    restock_min: 25,
-    restock_max: 30
+    quantity_min: 30,
+    quantity_max: 50,
+    rating: '熱銷商品',
+    rating_level: 'hot',
+    customer_segments: ['時尚年輕族群', '潮流追隨者', '品質重視者'],
+    sentiment_summary: '正面評價占82%，主要關注品質與時尚感。消費者特別讚賞產品的耐用性和設計美感。',
+    similar_products_avg: 42,
+    restock_cycle_type: 'short_term',
+    short_term_days: '7-10天',
+    long_term_days: '15-20天',
+    recommended_cycle: '短期補貨',
+    customer_simulation: {
+      purchase_intent: 85,
+      repeat_purchase: 72,
+      word_of_mouth: 78
+    },
+    search_trends: mockSearchTrendsData,
+    channel_breakdown: mockChannelData
   };
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
     await new Promise(resolve => setTimeout(resolve, 3000));
     setResults(finalRecommendations);
+    
+    // Store the complete analysis results including search trends
+    const analysisData = {
+      ...finalRecommendations,
+      productData,
+      demandData,
+      analysisTimestamp: new Date().toISOString()
+    };
+    localStorage.setItem('marketAnalysisData', JSON.stringify(analysisData));
+    
     onComplete();
     setIsAnalyzing(false);
+  };
+
+  const getRatingColor = (level: string) => {
+    switch (level) {
+      case 'hot': return 'bg-red-500 text-white';
+      case 'warm': return 'bg-orange-500 text-white';
+      case 'normal': return 'bg-blue-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
+
+  const getRatingIcon = (level: string) => {
+    switch (level) {
+      case 'hot': return <TrendingUp className="h-4 w-4" />;
+      case 'warm': return <Star className="h-4 w-4" />;
+      case 'normal': return <BarChart3 className="h-4 w-4" />;
+      default: return <Eye className="h-4 w-4" />;
+    }
   };
 
   return (
@@ -64,113 +196,8 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
       <div className="text-center mb-6">
         <h2 className="text-3xl font-bold text-pink-600 mb-3">市場趨勢驗證分析</h2>
         <p className="text-pink-600/80 text-lg">
-          整合 Google Trends、社群媒體輿情與競爭對手分析，驗證並優化需求預測結果
+          整合多維度分析，提供最終商品建議
         </p>
-      </div>
-
-      {/* Context Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Baseline Data */}
-        {productData && (
-          <Card className="card-glass shadow-warm border border-blue-200/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-blue-600 text-lg">
-                <BarChart3 className="h-5 w-5" />
-                基線數據參考
-              </CardTitle>
-              <CardDescription className="text-blue-600/70 text-sm">
-                基於新品評估階段的歷史商品分析結果，以下為相似商品的平均表現指標
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-700">
-                  {Math.round(productData.baselineMetrics.avgSalesVelocity)}
-                </p>
-                <p className="text-sm text-blue-600/70">平均銷售速度 (件/月)</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-700">
-                  {Math.round(productData.baselineMetrics.avgLifeCycle)}
-                </p>
-                <p className="text-sm text-blue-600/70">平均生命週期 (月)</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-700">
-                  {productData.baselineMetrics.avgProfit.toFixed(1)}%
-                </p>
-                <p className="text-sm text-blue-600/70">平均利潤率</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Product Evaluation Results */}
-        {productData && (
-          <Card className="card-glass shadow-warm border border-purple-200/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-purple-600 text-lg">
-                <Eye className="h-5 w-5" />
-                新品評估結果
-              </CardTitle>
-              <CardDescription className="text-purple-600/70 text-sm">
-                商品名稱：{productData.name}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-purple-700">
-                  {Math.round(productData.baselineMetrics.avgSalesVelocity)}
-                </p>
-                <p className="text-sm text-purple-600/70">平均銷速</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-purple-700">
-                  {Math.round(productData.baselineMetrics.avgLifeCycle)}
-                </p>
-                <p className="text-sm text-purple-600/70">生命週期</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-purple-700">
-                  {productData.baselineMetrics.avgProfit.toFixed(1)}%
-                </p>
-                <p className="text-sm text-purple-600/70">利潤率</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Demand Prediction Results */}
-        {demandData && (
-          <Card className="card-glass shadow-warm border border-emerald-200/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-emerald-600 text-lg">
-                <Users className="h-5 w-5" />
-                需求預測結果
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-emerald-700">
-                  {demandData.totalDemand.toLocaleString()}
-                </p>
-                <p className="text-sm text-emerald-600/70">預期總需求</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-emerald-700">
-                  {demandData.overallIntent}%
-                </p>
-                <p className="text-sm text-emerald-600/70">整體購買意願</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-emerald-700">
-                  {demandData.segments.length}
-                </p>
-                <p className="text-sm text-emerald-600/70">客群分類</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       {/* Analysis Control */}
@@ -180,10 +207,10 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
             <div className="p-2 bg-emerald-500/20 rounded-lg">
               <Globe className="h-6 w-6" />
             </div>
-            外部市場數據整合分析
+            綜合市場分析
           </CardTitle>
           <CardDescription className="text-pink-600/70 text-base">
-            整合 Google Trends、OpView 社群輿情、競爭對手分析等外部數據源，驗證虛擬顧客預測結果
+            整合新品評估、需求預測與市場趨勢數據，生成最終商品建議
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -192,199 +219,222 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
             disabled={isAnalyzing}
             className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white border-0 py-3 text-lg font-medium"
           >
-            {isAnalyzing ? '正在整合外部數據分析...' : '開始市場趨勢驗證'}
+            {isAnalyzing ? '正在生成最終分析報告...' : '生成客戶分析報告'}
           </Button>
           {isAnalyzing && (
             <div className="mt-6 space-y-3">
               <p className="text-sm text-pink-600/70">分析進度</p>
-              <Progress value={75} className="w-full h-2" />
-              <p className="text-xs text-pink-600/60">正在分析 Google Trends 與社群媒體數據...</p>
+              <Progress value={85} className="w-full h-2" />
+              <p className="text-xs text-pink-600/60">正在整合分析結果...</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Results */}
+      {/* Search Trends and Channel Analysis */}
       {results && (
-        <div className="space-y-8">
-          {/* Google Trends Analysis */}
-          <Card className="card-glass shadow-warm">
-            <CardHeader>
-              <CardTitle className="text-emerald-600">Google Trends 搜尋趨勢分析</CardTitle>
-              <CardDescription className="text-pink-600/70">過去6個月相關關鍵字搜尋趨勢</CardDescription>
+        <div className="space-y-6">
+          {/* Search Trend Chart */}
+          <SearchTrendChart 
+            productName={productData?.name || "時尚牛仔夾克"}
+            data={results.search_trends}
+          />
+
+          {/* Channel Breakdown */}
+          <SearchChannelBreakdown 
+            productName={productData?.name || "時尚牛仔夾克"}
+            channelData={results.channel_breakdown}
+          />
+
+          {/* Header Card with Rating */}
+          <Card className="card-glass shadow-warm border border-emerald-200/50 bg-gradient-to-br from-emerald-50/50 to-blue-50/50">
+            <CardHeader className="text-center pb-6">
+              <div className="flex justify-center mb-4">
+                <Badge className={`${getRatingColor(results.rating_level)} px-6 py-3 text-xl font-bold flex items-center gap-3`}>
+                  {getRatingIcon(results.rating_level)}
+                  {results.rating}
+                </Badge>
+              </div>
+              <CardTitle className="text-4xl font-bold text-emerald-700 mb-2">客戶反饋報告</CardTitle>
+              <p className="text-emerald-600/80 text-lg">基於AI多維度分析的完整建議方案</p>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={googleTrendsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f3e8ff" />
-                  <XAxis dataKey="month" stroke="#be185d" />
-                  <YAxis stroke="#be185d" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #f3e8ff', 
-                      borderRadius: '8px',
-                      color: '#be185d'
-                    }} 
-                  />
-                  <Legend />
-                  <Line type="monotone" dataKey="牛仔外套" stroke="#3B82F6" strokeWidth={2} />
-                  <Line type="monotone" dataKey="時尚外套" stroke="#8B5CF6" strokeWidth={2} />
-                  <Line type="monotone" dataKey="春季外套" stroke="#10B981" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
           </Card>
 
-          {/* Social Media Sentiment */}
-          <Card className="card-glass shadow-warm">
-            <CardHeader>
-              <CardTitle className="text-emerald-600">社群媒體輿情分析</CardTitle>
-              <CardDescription className="text-pink-600/70">各平台提及次數與情緒分析</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6">
-                {socialMediaData.map((platform, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <div className="flex items-center gap-4">
-                      <MessageSquare className="h-6 w-6 text-blue-500" />
-                      <div>
-                        <h3 className="font-semibold text-pink-700">{platform.platform}</h3>
-                        <p className="text-sm text-pink-600/70">提及次數: {platform.提及次數}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <p className="text-sm text-pink-600/70">正面情緒</p>
-                        <p className="font-semibold text-pink-700">{platform.正面情緒}%</p>
-                      </div>
-                      <Progress value={platform.正面情緒} className="w-20 h-2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Competitor Analysis */}
-          <Card className="card-glass shadow-warm">
-            <CardHeader>
-              <CardTitle className="text-emerald-600">競爭對手分析</CardTitle>
-              <CardDescription className="text-pink-600/70">主要競爭品牌市場表現</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                {competitorAnalysis.map((competitor, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center border border-pink-200">
-                        <span className="text-pink-700 font-bold">{competitor.brand[0]}</span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-pink-700">{competitor.brand}</h3>
-                        <p className="text-sm text-pink-600/70">{competitor.價格區間}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
-                        <p className="text-sm text-pink-600/70">市場份額</p>
-                        <p className="font-semibold text-pink-700">{competitor.市場份額}%</p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {competitor.趨勢 === 'up' && <TrendingUp className="h-5 w-5 text-emerald-500" />}
-                        {competitor.趨勢 === 'down' && <TrendingDown className="h-5 w-5 text-red-500" />}
-                        {competitor.趨勢 === 'stable' && <div className="w-5 h-0.5 bg-gray-500"></div>}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Final Recommendations */}
-          <Card className="card-glass shadow-warm border border-emerald-200/50">
-            <CardHeader>
-              <CardTitle className="text-emerald-600">最終建議與預測優化</CardTitle>
-              <CardDescription className="text-pink-600/70">
-                基於三階段分析的綜合建議
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <Star className="h-5 w-5 text-yellow-500" />
-                    <div>
-                      <p className="text-sm text-pink-600/80">建議售價</p>
-                      <p className="font-semibold text-pink-700">{results.optimal_price}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <TrendingUp className="h-5 w-5 text-emerald-500" />
-                    <div>
-                      <p className="text-sm text-pink-600/80">最佳上市時機</p>
-                      <p className="font-semibold text-pink-700">{results.launch_timing}</p>
-                    </div>
+          {/* Quantity Recommendation - Prominent */}
+          <Card className="card-glass shadow-warm border border-emerald-300/50">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="p-4 bg-emerald-500/20 rounded-full">
+                    <Package className="h-16 w-16 text-emerald-600" />
                   </div>
                 </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <Users className="h-5 w-5 text-blue-500" />
-                    <div>
-                      <p className="text-sm text-pink-600/80">主力目標族群</p>
-                      <p className="font-semibold text-pink-700">{results.target_segments.join('、')}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-4 bg-pink-50/50 rounded-lg border border-pink-200/50">
-                    <Heart className="h-5 w-5 text-red-500" />
-                    <div>
-                      <p className="text-sm text-pink-600/80">推薦行銷通路</p>
-                      <p className="font-semibold text-pink-700">{results.marketing_channels.join('、')}</p>
-                    </div>
-                  </div>
+                <h3 className="text-3xl font-bold text-emerald-700 mb-4">建議進貨數量</h3>
+                <div className="text-6xl font-bold text-emerald-800 mb-4">
+                  {results.quantity_min} - {results.quantity_max}
+                  <span className="text-2xl ml-2">件</span>
                 </div>
-              </div>
-              
-              {/* <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
-                <h3 className="text-2xl font-bold text-emerald-700 mb-2">市場反應預測</h3>
-                <div className="flex items-center justify-center gap-4">
-                  <Progress value={results.success_probability} className="flex-1 max-w-md h-4" />
-                  <span className="text-3xl font-bold text-emerald-700">{results.success_probability}%</span>
-                </div>
-              </div> */}
-
-              <div className="text-center p-6 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
-                <h3 className="text-2xl font-bold text-emerald-700 mb-2">進貨數量預測</h3>
-                <div className="flex flex-col items-center justify-center gap-2">
-                  {/* <div className="relative w-full max-w-md h-4">
-                    <div className="absolute top-0 left-0 h-4 w-full bg-yellow-100 rounded" />
-                    <div
-                      className="absolute top-0 h-4 bg-green-500 rounded"
-                      style={{
-                        left: `${finalRecommendations.restock_min}%`,
-                        width: `${finalRecommendations.restock_max - finalRecommendations.restock_min}%`
-                      }}
-                    />
-                  </div> */}
-                  <span className="text-lg font-bold text-emerald-700">
-                    建議進貨區間：{finalRecommendations.restock_min} ~ {finalRecommendations.restock_max} 單位
-                  </span>
-                </div>
-                <p className="text-sm text-emerald-600/90 mt-3 font-medium">
-                  透過三階段可解釋AI，歷史資訊、代理人的模擬、市場資訊，預測商品在市場上的表現，提供建議進貨區間。
+                <p className="text-emerald-600/80 text-lg font-medium">
+                  基於市場需求預測與風險評估的最佳進貨區間
                 </p>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Summary Analysis */}
+          <Card className="card-glass shadow-warm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-blue-700 text-2xl">
+                <MessageSquare className="h-7 w-7" />
+                綜合分析摘要
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
               
-              {/* Analysis Complete */}
-              <div className="flex items-center justify-center gap-3 mt-8 p-4 bg-emerald-50/70 rounded-xl border border-emerald-200/50">
-                <CheckCircle className="h-6 w-6 text-emerald-500" />
-                <span className="text-emerald-700 font-semibold text-lg">
-                  三階段智慧預測分析已完成！
-                </span>
+              {/* Customer Segments */}
+              <div className="p-6 bg-blue-50/70 rounded-xl border border-blue-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Users className="h-6 w-6 text-blue-600" />
+                  <h3 className="text-xl font-bold text-blue-700">主要客群模擬</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.purchase_intent}%</div>
+                    <div className="text-blue-600 font-medium">購買意向</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.repeat_purchase}%</div>
+                    <div className="text-blue-600 font-medium">回購率</div>
+                  </div>
+                  <div className="text-center p-4 bg-white/70 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-800">{results.customer_simulation.word_of_mouth}%</div>
+                    <div className="text-blue-600 font-medium">口碑推薦</div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {results.customer_segments.map((segment, index) => (
+                    <Badge key={index} variant="outline" className="text-blue-700 border-blue-300 px-3 py-1">
+                      {segment}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sentiment Analysis */}
+              <div className="p-6 bg-purple-50/70 rounded-xl border border-purple-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Heart className="h-6 w-6 text-purple-600" />
+                  <h3 className="text-xl font-bold text-purple-700">輿情分析結果</h3>
+                </div>
+                <p className="text-purple-700 font-medium text-lg leading-relaxed">
+                  {results.sentiment_summary}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Market Data & Restock Recommendations */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Similar Products Average */}
+            <Card className="card-glass shadow-warm border border-amber-200/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-amber-700">
+                  <BarChart3 className="h-6 w-6" />
+                  相似商品表現
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-amber-800 mb-2">
+                    {results.similar_products_avg}
+                  </div>
+                  <div className="text-lg text-amber-600 font-medium mb-3">件/月 平均銷量</div>
+                  <div className="p-3 bg-amber-50/70 rounded-lg">
+                    <p className="text-amber-700 text-sm">
+                      同類商品市場平均表現，為您的定價和庫存策略提供參考基準
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Restock Recommendations */}
+            <Card className="card-glass shadow-warm border border-rose-200/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-rose-700">
+                  <RefreshCw className="h-6 w-6" />
+                  補貨週期建議
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  
+                  {/* Recommended Cycle */}
+                  <div className="text-center mb-4">
+                    <Badge className="bg-rose-500 text-white px-4 py-2 text-lg font-bold">
+                      推薦：{results.recommended_cycle}
+                    </Badge>
+                  </div>
+
+                  {/* Cycle Options */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-rose-50/70 rounded-lg border border-rose-200/50">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-rose-600" />
+                        <span className="font-medium text-rose-700">短期補貨</span>
+                      </div>
+                      <Badge variant="outline" className="text-rose-700 border-rose-300">
+                        每 {results.short_term_days}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gray-50/70 rounded-lg border border-gray-200/50">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-gray-600" />
+                        <span className="font-medium text-gray-700">長期補貨</span>
+                      </div>
+                      <Badge variant="outline" className="text-gray-700 border-gray-300">
+                        每 {results.long_term_days}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-rose-50/50 rounded-lg mt-4">
+                    <p className="text-rose-700 text-sm text-center">
+                      建議採用短期補貨策略，確保庫存充足並降低滯銷風險
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Final Status */}
+          <Card className="card-glass shadow-warm bg-gradient-to-br from-emerald-50/80 to-blue-50/80 border border-emerald-200/50">
+            <CardContent className="p-8">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <CheckCircle className="h-12 w-12 text-emerald-500" />
+                  <h3 className="text-3xl font-bold text-emerald-700">分析報告完成</h3>
+                </div>
+                <p className="text-emerald-700 font-medium text-xl mb-4">
+                  基於三階段可解釋AI分析，提供完整商品評估建議
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">新品評估</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">需求預測</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                  <div className="p-4 bg-white/70 rounded-lg">
+                    <div className="text-lg font-bold text-emerald-800">市場驗證</div>
+                    <div className="text-emerald-600">✓ 已完成</div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
