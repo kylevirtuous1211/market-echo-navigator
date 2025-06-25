@@ -9,95 +9,36 @@ from langgraph.store.memory import InMemoryStore
 from langgraph.prebuilt import create_react_agent
 from langgraph_swarm import create_handoff_tool, create_swarm
 import re
+import datetime
+import uuid
+from agent_class import Agent, SynthesizerAgent
+# from supabase import create_client, Client
 
 # Setup
 load_dotenv(dotenv_path='.env')  
 api_key = os.getenv("API_KEY")
 model = ChatOpenAI(model="llama-3.3-70b-versatile", api_key=api_key, base_url="https://api.groq.com/openai/v1")
 
+# supabase: Client = create_client(
+#     os.getenv("SUPABASE_URL"),
+#     os.getenv("SUPABASE_ANON_KEY")
+# )
+
+def save_agent_simulations_to_supabase(agent_simulations):
+    """Save agent simulation results to Supabase"""
+    try:
+        if agent_simulations:
+            response = supabase.table('beauty_agent_simulations').insert(agent_simulations).execute()
+            print(f"Saved {len(agent_simulations)} agent simulations to Supabase")
+            return response.data
+    except Exception as e:
+        print(f"Error saving to Supabase: {e}")
+        raise e
+
 def clean_agent_response(content):
     """清理代理回應"""
     cleaned = re.sub(r'\n{3,}', '\n\n', content)
     return cleaned.strip()
-
-class Agent:
-    """用於創建角色代理的通用代理類別"""
-    
-    def __init__(self, name, agent_name, demographics, motivations, concerns):
-        self.name = name
-        self.agent_name = agent_name
-        self.demographics = demographics
-        self.motivations = motivations
-        self.concerns = concerns
-    
-    def create_langgraph_agent(self, model, product_question, tools=None):
-        """創建實際的LangGraph代理"""
-        if tools is None:
-            tools = [create_handoff_tool(agent_name="synthesizer")]
-        
-        prompt = f"""您是{self.name}，一位正在分析此產品問題的潛在客戶：{product_question}
-
-        您的個人資料：
-        - 人口統計：{self.demographics}
-        - 動機：{self.motivations}
-        - 關注點：{self.concerns}
-
-        任務：從您的角色視角回答產品問題。請專注於：
-        1. 此問題如何與您的特定關注點和動機相關
-        2. 作為這類型客戶您會有什麼痛點
-        3. 您對所提及的定價和目標人群的看法
-        4. 基於您的角色的具體建議
-        
-        重要：請使用純文字格式回應，不要使用任何Markdown格式符號（如**或*）。
-
-        在提供完整分析後，請使用交接工具將控制權交給綜合分析師。
-        
-        請保持詳盡但簡潔。在整個回應中保持您的角色特性。
-        """
-        
-        return create_react_agent(
-            model,
-            tools,
-            prompt=prompt,
-            name=self.agent_name
-        )
-
-class SynthesizerAgent:
-    """用於最終分析的綜合分析師代理"""
-    
-    def __init__(self, agent_name="synthesizer"):
-        self.agent_name = agent_name
-    
-    def create_langgraph_agent(self, model, product_question):
-        """創建綜合分析師代理"""
-        prompt = f"""您是一位市場研究綜合分析師，正在分析對以下問題的回應：{product_question}
-
-        您的任務：
-        1. 審查所有角色代理的觀點
-        2. 識別各角色間的共同痛點和關注點
-        3. 突出每個人口群體的獨特見解
-        4. 分析定價策略和目標人群
-        5. 提供解決客戶痛點的可行建議
-        6. 總結整體市場可行性評估
-        
-        重要：請使用純文字格式回應，不要使用任何Markdown格式符號（如**或*）。
-        
-        請用清晰的章節結構化您的分析：
-        - **共同痛點**
-        - **角色特定見解** 
-        - **定價分析**
-        - **建議**
-        - **市場可行性**
-        
-        請提供全面且具體的可行見解。
-        """
-        
-        return create_react_agent(
-            model,
-            [],
-            prompt=prompt,
-            name=self.agent_name
-        )
 
 def create_persona_agents():
     """創建所有角色代理實例"""
@@ -126,9 +67,30 @@ def create_persona_agents():
     ]
     return agents
 
-def run_market_research_discussion(product_question):
+def agent_to_simulation_result(persona, content, simulation_id, product_name, product_question):
+    """Format agent result to match AgentSimulation interface"""
+    return {
+        "id": str(uuid.uuid4()),
+        "simulation_id": simulation_id,
+        "product_name": product_name,
+        "agent_name": persona.agent_name,
+        "agent_type": persona.name,
+        "agent_demographics": persona.demographics,
+        "agent_motivations": persona.motivations,
+        "agent_concerns": persona.concerns,
+        "purchase_intent": None,  # Fill with actual value if available
+        "price_sensitivity": None,  # Fill with actual value if available
+        "brand_loyalty": None,  # Fill with actual value if available
+        "response_text": content,
+        "feedback_categories": None,  # Fill if available
+        "recommendations": None,      # Fill if available
+        "risk_factors": None,         # Fill if available
+        "simulation_date": datetime.utcnow().isoformat()
+    }
+
+def run_market_research_discussion(product_name, price):
     """執行完整的市場研究討論"""
-    
+    product_question = f"我正在銷售{product_name}，價格={price}"
     # 創建角色代理實例
     persona_agents = create_persona_agents()
     synthesizer = SynthesizerAgent()
@@ -160,6 +122,8 @@ def run_market_research_discussion(product_question):
     
     results = {}
     current_result = None
+    simulation_id = str(uuid.uuid4())
+    agent_simulations = []
     
     try:
         # 順序執行每個角色代理
@@ -191,6 +155,12 @@ def run_market_research_discussion(product_question):
                 if hasattr(latest_message, "content"):
                     content = clean_agent_response(latest_message.content)
                     results[persona.name] = content
+                    # TODO: more detail, change prompting
+                    agent_simulations.append(
+                        agent_to_simulation_result(
+                            persona, content, simulation_id, product_name, product_question
+                        )
+                    )
                     print(f"{persona.name}：{content}")
         
         # 執行綜合分析師
@@ -221,8 +191,25 @@ def run_market_research_discussion(product_question):
             print(f"動機：{persona.motivations}")
             print(f"關注點：{persona.concerns}")
             print()
+            
+        # After generating agent_simulations, save to Supabase
+        try:
+            if agent_simulations:
+                # Add simulation_id and timestamp to each record
+                simulation_id = str(uuid.uuid4())
+                for sim in agent_simulations:
+                    sim['simulation_id'] = simulation_id
+                    sim['simulation_date'] = datetime.now().isoformat()
+                    sim['product_name'] = product_name
+                
+                # Save to Supabase
+                save_agent_simulations_to_supabase(agent_simulations)
+                
+        except Exception as e:
+            print(f"Error saving simulation results: {e}")
+            # Continue execution even if saving fails
         
-        return results, persona_agents
+        return results, persona_agents, agent_simulations
         
     except Exception as e:
         print(f"討論過程中發生錯誤：{str(e)}")
@@ -236,25 +223,9 @@ def add_custom_agent(name, agent_name, demographics, motivations, concerns):
 if __name__ == "__main__":
     # 定義您的產品問題
     price = 300
-    buyer_age = 21
-    question_for_analysis = "客戶在玩這類遊戲時的痛點是什麼？"
-    
-    product_question = f"我正在銷售糖果。價格={price}，買家年齡={buyer_age}。問題：{question_for_analysis}"
+    product_name = "柯南手機遊戲"
     
     # 執行市場研究
-    results, personas = run_market_research_discussion(product_question)
-    
-    # 如何擴展自定義代理的範例
-    print("\n=== 範例：添加自定義代理 ===")
-    custom_agent = add_custom_agent(
-        name="注重健康的漢娜",
-        agent_name="health_conscious_hannah",
-        demographics="30-40歲，健身愛好者，注重健康的生活方式",
-        motivations="尋求健康、天然且具有明確營養益處的產品",
-        concerns="糖分含量，人工成分，卡路里計算，健康影響"
-    )
-    print(f"已創建自定義代理：{custom_agent.name}")
-    print(f"人口統計：{custom_agent.demographics}")
-    
-    # 要使用自定義代理，您需要將其添加到create_persona_agents()中的persona_agents列表
-    # 或修改函數以接受額外的代理作為參數
+    results, personas, agent_simulations = run_market_research_discussion(product_name, price)
+    import json
+    print(json.dumps(agent_simulations, ensure_ascii=False, indent=2))

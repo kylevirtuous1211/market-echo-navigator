@@ -26,7 +26,7 @@ const Header: React.FC = () => {
           <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed drop-shadow-sm">
             結合 NLP 語意比對、虛擬顧客代理人訪查、市場趨勢的全方位分析系統
           </p>
-          <div className="flex justify gap-4 mt-8">
+          <div className="flex justify-center gap-4 mt-8">
             <div className="flex items-center gap-2 text-white/80">
               <Star className="h-5 w-5 text-amber-200" />
               <span>創新技術</span>
