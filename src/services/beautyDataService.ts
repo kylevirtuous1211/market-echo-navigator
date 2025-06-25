@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface BeautyProduct {
@@ -50,6 +51,27 @@ export interface AgentSimulation {
   risk_factors?: string[];
   simulation_date: string;
 }
+
+// Helper function to transform database results to BeautyProduct interface
+const transformToBeautyProduct = (dbProduct: any): BeautyProduct => {
+  return {
+    id: dbProduct.id,
+    product_name: dbProduct.product_name,
+    brand: dbProduct.brand,
+    description: dbProduct.description,
+    price: dbProduct.price,
+    cost: dbProduct.cost,
+    sales_velocity: dbProduct.sales_velocity,
+    profit_margin: dbProduct.profit_margin,
+    inventory_level: dbProduct.inventory_level,
+    category: dbProduct.category,
+    subcategory: dbProduct.subcategory,
+    target_age_group: dbProduct.target_age_group,
+    skin_type: dbProduct.skin_type,
+    ingredients: Array.isArray(dbProduct.ingredients) ? dbProduct.ingredients : 
+                 dbProduct.ingredients ? [dbProduct.ingredients] : undefined
+  };
+};
 
 // 計算文字相似度的函數
 const calculateTextSimilarity = (text1: string, text2: string): number => {
@@ -105,7 +127,7 @@ export const beautyDataService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformToBeautyProduct);
   },
 
   // 根據品牌獲取商品
@@ -121,7 +143,7 @@ export const beautyDataService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformToBeautyProduct);
   },
 
   // 根據類別獲取商品
@@ -137,7 +159,7 @@ export const beautyDataService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformToBeautyProduct);
   },
 
   // 搜尋相似商品 - 增強版本
@@ -156,7 +178,7 @@ export const beautyDataService = {
       console.error('Error in basic search:', error);
     }
 
-    let results = basicResults || [];
+    let results = (basicResults || []).map(transformToBeautyProduct);
     console.log('基本搜尋結果數量：', results.length);
 
     // 如果基本搜尋結果少於5個，執行更廣泛的搜尋
@@ -169,8 +191,9 @@ export const beautyDataService = {
       if (allError) {
         console.error('Error fetching all products:', allError);
       } else if (allProducts) {
-        // 使用語意相似度計算
-        const scoredProducts = allProducts
+        // 轉換數據並使用語意相似度計算
+        const transformedProducts = allProducts.map(transformToBeautyProduct);
+        const scoredProducts = transformedProducts
           .map(product => ({
             ...product,
             similarity: calculateKeywordScore(searchTerm, product)
