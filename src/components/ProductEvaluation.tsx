@@ -85,9 +85,9 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
   const convertToSimilarProducts = (products: BeautyProduct[]): SimilarProduct[] => {
     return products.map((product) => ({
       name: product.product_name,
-      similarity: 0.85, // 預設相似度，實際應用中可以基於搜尋演算法計算
+      similarity: 0.85, // 預設相似度
       salesVelocity: product.sales_velocity,
-      lifeCycle: 12, 
+      lifeCycle: 12, // 預設生命週期，因為資料庫中沒有這個欄位
       profit: product.profit_margin,
       category: product.brand
     }));
@@ -95,7 +95,6 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
 
   // 將 BeautyProduct 數據轉換為圖表格式
   const generateChartData = (products: BeautyProduct[]): ChartDataPoint[] => {
-    // 創建月份數據，每個產品作為一個系列
     const months = ['1月', '2月', '3月', '4月', '5月', '6月'];
     
     return months.map((month, index) => {

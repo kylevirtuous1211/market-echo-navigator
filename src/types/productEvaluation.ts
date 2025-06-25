@@ -14,7 +14,6 @@ export interface ProductData {
   similarProducts: SimilarProduct[];
   baselineMetrics: {
     avgSalesVelocity: number;
-    avgLifeCycle: number;
     avgProfit: number;
   };
 }

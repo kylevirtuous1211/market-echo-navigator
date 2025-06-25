@@ -48,8 +48,7 @@ export interface AgentSimulation {
 }
 
 export const beautyDataService = {
-  // 獲取美妝商品歷史數據
-  // ✅ Fixed: Only select existing columns
+  // 獲取美妝商品歷史數據 - 只選擇存在的欄位
   async getBeautyProducts(): Promise<BeautyProduct[]> {
     const { data, error } = await supabase
       .from('beauty_products_history')
@@ -68,7 +67,7 @@ export const beautyDataService = {
   async getProductsByBrand(brand: string): Promise<BeautyProduct[]> {
     const { data, error } = await supabase
       .from('beauty_products_history')
-      .select('*')
+      .select('id, product_name, brand, description, price, cost, sales_velocity, profit_margin, inventory_level')
       .eq('brand', brand)
       .order('sales_velocity', { ascending: false });
 
@@ -80,11 +79,11 @@ export const beautyDataService = {
     return data || [];
   },
 
-  // 根據類別獲取商品
+  // 根據類別獲取商品 - 注意：category 欄位存在於資料庫中
   async getProductsByCategory(category: string): Promise<BeautyProduct[]> {
     const { data, error } = await supabase
       .from('beauty_products_history')
-      .select('*')
+      .select('id, product_name, brand, description, price, cost, sales_velocity, profit_margin, inventory_level')
       .eq('category', category)
       .order('profit_margin', { ascending: false });
 
@@ -96,11 +95,11 @@ export const beautyDataService = {
     return data || [];
   },
 
-  // 搜尋相似商品 (基於產品名稱和描述)
+  // 搜尋相似商品
   async searchSimilarProducts(searchTerm: string): Promise<BeautyProduct[]> {
     const { data, error } = await supabase
       .from('beauty_products_history')
-      .select('*')
+      .select('id, product_name, brand, description, price, cost, sales_velocity, profit_margin, inventory_level')
       .or(`product_name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
       .order('sales_velocity', { ascending: false })
       .limit(10);
@@ -165,11 +164,11 @@ export const beautyDataService = {
     return data || [];
   },
 
-  // 計算基準指標
+  // 計算基準指標 - 修正為只查詢存在的欄位
   async calculateBaselineMetrics(category?: string) {
     let query = supabase
       .from('beauty_products_history')
-      .select('sales_velocity, life_cycle_months, profit_margin');
+      .select('sales_velocity, profit_margin');
 
     if (category) {
       query = query.eq('category', category);
@@ -185,18 +184,15 @@ export const beautyDataService = {
     if (!data || data.length === 0) {
       return {
         avgSalesVelocity: 0,
-        avgLifeCycle: 0,
         avgProfit: 0
       };
     }
 
     const avgSalesVelocity = data.reduce((sum, p) => sum + p.sales_velocity, 0) / data.length;
-    const avgLifeCycle = data.reduce((sum, p) => sum + p.life_cycle_months, 0) / data.length;
     const avgProfit = data.reduce((sum, p) => sum + p.profit_margin, 0) / data.length;
 
     return {
       avgSalesVelocity: Math.round(avgSalesVelocity),
-      avgLifeCycle: Math.round(avgLifeCycle),
       avgProfit: Math.round(avgProfit * 100) / 100
     };
   }
