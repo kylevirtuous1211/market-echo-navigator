@@ -85,90 +85,56 @@ CREATE TABLE public.beauty_analysis_results (
 );
 
 -- 建立索引以提升查詢效能
-CREATE INDEX idx_beauty_products_category ON public.beauty_products_history(category);
 CREATE INDEX idx_beauty_products_brand ON public.beauty_products_history(brand);
 CREATE INDEX idx_beauty_sentiment_keyword ON public.beauty_sentiment_analysis(keyword);
 CREATE INDEX idx_beauty_sentiment_date ON public.beauty_sentiment_analysis(analysis_date);
 CREATE INDEX idx_beauty_simulations_product ON public.beauty_agent_simulations(product_name);
 CREATE INDEX idx_beauty_simulations_date ON public.beauty_agent_simulations(simulation_date);
 
--- 美妝商品歷史數據種子數據
+-- 美妝商品歷史數據種子數據 (excel 4色眼影盤相關商品)
 INSERT INTO public.beauty_products_history (
-  product_name, brand, category, subcategory, description, price, cost, 
-  sales_velocity, life_cycle_months, profit_margin, inventory_level, 
-  launch_date, target_age_group, skin_type, ingredients, certifications, packaging_type
+  product_name, brand, description, price, cost, 
+  sales_velocity, profit_margin, inventory_level
 ) VALUES 
 (
-  '玻尿酸保濕精華液', 'BeautyLux', '面部護理', '精華液',
-  '高濃度玻尿酸保濕精華，深層補水鎖水，適合所有膚質',
-  1280.00, 384.00, 150, 18, 70.00, 89,
-  '2024-01-15', '25-40', '所有膚質',
-  '["玻尿酸", "維生素B5", "甘油"]'::jsonb,
-  ARRAY['無動物測試', '天然成分'],
-  '玻璃瓶裝'
+  'excel 4色眼影盤 SR01 玫瑰棕', 'excel',
+  '日系經典4色眼影盤，大地色系，顯色度適中，易於暈染打造自然眼妝',
+  450.00, 135.00, 320, 70.00, 245
 ),
 (
-  '維他命C亮白面膜', 'GlowUp', '面部護理', '面膜',
-  '含15%維他命C，快速亮白提亮膚色，一週見效',
-  890.00, 267.00, 220, 12, 70.00, 156,
-  '2024-02-01', '20-35', '暗沉膚質',
-  '["維他命C", "熊果素", "煙醯胺"]'::jsonb,
-  ARRAY['有機認證', '無動物測試'],
-  '鋁箔包裝'
+  'excel 4色眼影盤 SR02 珊瑚橘', 'excel',
+  '溫暖珊瑚橘調4色眼影，適合春夏妝容，粉質細膩好暈染',
+  450.00, 135.00, 280, 70.00, 198
 ),
 (
-  '絲滑霧面唇膏', 'LipLuxe', '彩妝', '唇彩',
-  '絲滑質地霧面唇膏，持久不脫色，多種時尚色號',
-  650.00, 195.00, 300, 24, 70.00, 234,
-  '2023-11-20', '18-30', '所有膚質',
-  '["維生素E", "荷荷巴油", "蠟質"]'::jsonb,
-  ARRAY['無動物測試'],
-  '金屬管裝'
+  'Heme 6色眼影盤 大地色系', 'Heme',
+  '6色眼影組合，提供更豐富色彩選擇，可創造多層次眼妝效果',
+  380.00, 114.00, 250, 70.00, 167
 ),
 (
-  '抗老緊緻眼霜', 'AgeDefense', '面部護理', '眼部護理',
-  '胜肽抗老配方，緊緻眼周肌膚，淡化細紋',
-  1680.00, 504.00, 95, 20, 70.00, 67,
-  '2024-03-10', '30-50', '成熟膚質',
-  '["胜肽", "視黃醇", "咖啡因"]'::jsonb,
-  ARRAY['皮膚科測試', '無動物測試'],
-  '氣密泵頭'
+  'Heme 修容盤 00號', 'Heme',
+  '多色修容盤，可修飾臉部輪廓，打造立體小臉效果',
+  320.00, 96.00, 180, 70.00, 134
 ),
 (
-  '天然有機洗面乳', 'PureNature', '面部護理', '潔面',
-  '100%天然有機成分，溫和潔淨不緊繃',
-  480.00, 144.00, 180, 15, 70.00, 123,
-  '2024-01-05', '18-45', '敏感膚質',
-  '["蘆薈", "洋甘菊", "椰子油"]'::jsonb,
-  ARRAY['有機認證', '無動物測試', '素食友善'],
-  '環保軟管'
+  'excel 眼影刷具組', 'excel',
+  '專業眼影刷具組，包含暈染刷、細節刷，完美搭配眼影盤使用',
+  280.00, 84.00, 150, 70.00, 89
 ),
 (
-  '24小時持妝粉底液', 'StayPerfect', '彩妝', '底妝',
-  '24小時持妝不脫妝，自然遮瑕，多色號選擇',
-  980.00, 294.00, 240, 18, 70.00, 178,
-  '2023-12-15', '20-40', '所有膚質',
-  '["透明質酸", "SPF30", "維生素E"]'::jsonb,
-  ARRAY['無動物測試'],
-  '玻璃瓶裝泵頭'
+  'excel 眼線液筆 深棕色', 'excel',
+  '防水眼線液筆，搭配眼影使用，打造完整眼妝',
+  350.00, 105.00, 200, 70.00, 156
 ),
 (
-  '深層清潔黑頭面膜', 'PorePure', '面部護理', '面膜',
-  '竹炭深層清潔，有效去除黑頭粉刺',
-  320.00, 96.00, 280, 10, 70.00, 201,
-  '2024-02-20', '16-30', '油性膚質',
-  '["竹炭", "茶樹精油", "水楊酸"]'::jsonb,
-  ARRAY['無動物測試'],
-  '單片裝'
+  'Canmake 腮紅膏 PW23', 'Canmake',
+  '奶油質地腮紅膏，自然紅潤，與眼影搭配打造協調妝容',
+  290.00, 87.00, 220, 70.00, 178
 ),
 (
-  '奢華香水', 'Elegance', '香水', '女性香水',
-  '法式奢華香水，花香調，優雅持久',
-  2800.00, 840.00, 65, 36, 70.00, 45,
-  '2023-10-01', '25-45', '所有膚質',
-  '["茉莉花", "玫瑰", "麝香"]'::jsonb,
-  ARRAY['法國製造'],
-  '水晶瓶裝'
+  'excel 眉粉盤 PD01', 'excel',
+  '3色眉粉盤，可調配出最適合的眉色，與眼影色調完美搭配',
+  420.00, 126.00, 190, 70.00, 123
 );
 
 -- 輿情分析靜態種子數據

@@ -109,9 +109,6 @@ const Index = () => {
                   開始完整分析流程
                   <ArrowRight className="h-6 w-6 ml-3" />
                 </Button>
-                <p className="text-rose-600/70 mt-4 text-lg">
-                  預計完成時間：15-20 分鐘
-                </p>
               </div>
             </CardContent>
           </Card>

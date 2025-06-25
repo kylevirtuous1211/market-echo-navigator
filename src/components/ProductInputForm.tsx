@@ -42,7 +42,7 @@ const ProductInputForm: React.FC<ProductInputFormProps> = ({
           <Label htmlFor="productName" className="text-rose-700 text-base font-medium">商品名稱</Label>
           <Input
             id="productName"
-            placeholder="例：時尚牛仔外套"
+            placeholder="例：excel 4色眼影盤"
             value={productName}
             onChange={(e) => onProductNameChange(e.target.value)}
             className="bg-white/80 border-rose-200 text-rose-800 placeholder:text-rose-400 focus:border-rose-400 focus:ring-rose-400/20 mt-2"
@@ -52,7 +52,7 @@ const ProductInputForm: React.FC<ProductInputFormProps> = ({
           <Label htmlFor="productDescription" className="text-rose-700 text-base font-medium">商品描述</Label>
           <Textarea
             id="productDescription"
-            placeholder="例：採用高品質丹寧布料，具有復古風格設計，適合春秋季節穿著..."
+            placeholder="例：顯色度適中、易於暈染的特點，提供多種大地色系選擇..."
             value={productDescription}
             onChange={(e) => onProductDescriptionChange(e.target.value)}
             rows={4}
