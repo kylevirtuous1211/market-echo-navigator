@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import ProductInputForm from './ProductInputForm';
 import SimilarProductsAnalysis from './SimilarProductsAnalysis';
-import SalesPerformanceChart from './SalesPerformanceChart';
 import AnalysisCompleteCard from './AnalysisCompleteCard';
 import { ProductEvaluationProps, SimilarProduct, ChartDataPoint } from '@/types/productEvaluation';
 import { beautyDataService, BeautyProduct } from '@/services/beautyDataService';
@@ -193,7 +192,6 @@ const ProductEvaluation: React.FC<ProductEvaluationProps> = ({ onComplete, onPro
       {results && results.length > 0 && (
         <div className="space-y-8">
           <SimilarProductsAnalysis results={convertToSimilarProducts(results)} />
-          <SalesPerformanceChart data={generateChartData(results)} />
           <AnalysisCompleteCard onProceed={onProceed} />
         </div>
       )}
