@@ -43,7 +43,7 @@ const OverviewCards: React.FC = () => {
             市場趨勢分析
           </CardTitle>
           <CardDescription className="text-pink-600/70 text-base leading-relaxed">
-            整合 OpView、Google Trends 等外部數據源
+            使用 Glimpse API 整合 Google Trend數據源
           </CardDescription>
         </CardHeader>
       </Card>
