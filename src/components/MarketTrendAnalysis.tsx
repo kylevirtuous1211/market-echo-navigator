@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,6 @@ import { Progress } from "@/components/ui/progress";
 import { TrendingUp, TrendingDown, Eye, Globe, MessageSquare, Star, BarChart3, Users, Heart, CheckCircle, Package, Clock, RefreshCw, Target, Calendar } from 'lucide-react';
 import SearchVolumeChart from './SearchVolumeChart';
 import TrendScoreChart from './TrendScoreChart';
-import EngagementRateChart from './EngagementRateChart';
-import SearchChannelBreakdown from './SearchChannelBreakdown';
 
 interface MarketTrendAnalysisProps {
   productData?: any;
@@ -35,106 +34,6 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
     { month: '2024-12', search_volume: 36500, trend_score: 105.3, engagement_rate: 7.8 }
   ];
 
-  // Mock data for channel breakdown
-  const mockChannelData = [
-    {
-      platform: 'TikTok',
-      search_volume: 8500,
-      engagement_rate: 12.5,
-      sentiment_score: 78.3,
-      trending_hashtags: ['時尚穿搭', '牛仔風格', '復古潮流'],
-      user_demographics: {
-        age_group: '18-25歲',
-        gender_split: { male: 35, female: 65 },
-        primary_interests: ['時尚', '潮流', '穿搭']
-      }
-    },
-    {
-      platform: 'Instagram',
-      search_volume: 7200,
-      engagement_rate: 8.9,
-      sentiment_score: 82.1,
-      trending_hashtags: ['牛仔夾克', '街頭風格', 'OOTD'],
-      user_demographics: {
-        age_group: '22-35歲',
-        gender_split: { male: 40, female: 60 },
-        primary_interests: ['時尚', '攝影', '生活風格']
-      }
-    },
-    {
-      platform: 'YouTube',
-      search_volume: 5800,
-      engagement_rate: 6.2,
-      sentiment_score: 75.6,
-      trending_hashtags: ['穿搭教學', '時尚開箱', '造型技巧'],
-      user_demographics: {
-        age_group: '20-30歲',
-        gender_split: { male: 45, female: 55 },
-        primary_interests: ['教學', '時尚', '評測']
-      }
-    },
-    {
-      platform: 'Facebook',
-      search_volume: 4100,
-      engagement_rate: 4.7,
-      sentiment_score: 71.2,
-      trending_hashtags: ['經典時尚', '牛仔文化', '復古風格'],
-      user_demographics: {
-        age_group: '25-45歲',
-        gender_split: { male: 48, female: 52 },
-        primary_interests: ['時尚', '生活', '分享']
-      }
-    },
-    {
-      platform: 'Pinterest',
-      search_volume: 3900,
-      engagement_rate: 5.3,
-      sentiment_score: 85.7,
-      trending_hashtags: ['穿搭靈感', '時尚搭配', '風格指南'],
-      user_demographics: {
-        age_group: '25-40歲',
-        gender_split: { male: 25, female: 75 },
-        primary_interests: ['時尚', '設計', '靈感']
-      }
-    },
-    {
-      platform: 'Twitter',
-      search_volume: 3200,
-      engagement_rate: 7.1,
-      sentiment_score: 68.9,
-      trending_hashtags: ['時尚討論', '穿搭分享', '潮流趨勢'],
-      user_demographics: {
-        age_group: '20-35歲',
-        gender_split: { male: 52, female: 48 },
-        primary_interests: ['新聞', '討論', '時尚']
-      }
-    },
-    {
-      platform: 'LinkedIn',
-      search_volume: 1800,
-      engagement_rate: 3.2,
-      sentiment_score: 77.4,
-      trending_hashtags: ['商務穿搭', '職場風格', '專業形象'],
-      user_demographics: {
-        age_group: '25-45歲',
-        gender_split: { male: 55, female: 45 },
-        primary_interests: ['職業', '商務', '專業']
-      }
-    },
-    {
-      platform: 'Reddit',
-      search_volume: 2400,
-      engagement_rate: 9.8,
-      sentiment_score: 72.8,
-      trending_hashtags: ['時尚建議', '穿搭評價', '品牌討論'],
-      user_demographics: {
-        age_group: '18-30歲',
-        gender_split: { male: 60, female: 40 },
-        primary_interests: ['討論', '評價', '建議']
-      }
-    }
-  ];
-
   const finalRecommendations = {
     quantity_min: 30,
     quantity_max: 50,
@@ -151,8 +50,7 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
       purchase_intent: demandData?.avgPurchaseIntent || 85,
       price_sensitivity: demandData?.avgPriceSensitivity || 72
     },
-    search_trends: mockSearchTrendsData,
-    channel_breakdown: mockChannelData
+    search_trends: mockSearchTrendsData
   };
 
   const handleAnalyze = async () => {
@@ -160,7 +58,7 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
     await new Promise(resolve => setTimeout(resolve, 3000));
     setResults(finalRecommendations);
     
-    // Store the complete analysis results including search trends
+    // Store the complete analysis results
     const analysisData = {
       ...finalRecommendations,
       productData,
@@ -194,7 +92,7 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-bold text-pink-600 mb-3">市場趨勢驗證分析</h2>
+        <h2 className="text-3xl font-bold text-pink-600 mb-3">市場趋勢驗證分析</h2>
         <p className="text-pink-600/80 text-lg">
           整合多維度分析，提供最終商品建議
         </p>
@@ -210,7 +108,7 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
             綜合市場分析
           </CardTitle>
           <CardDescription className="text-pink-600/70 text-base">
-            整合新品評估、需求預測與市場趨勢數據，生成最終商品建議
+            整合新品評估、需求預測與市場趋勢數據，生成最終商品建議
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -231,11 +129,10 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
         </CardContent>
       </Card>
 
-      {/* Search Trends and Channel Analysis */}
+      {/* Search Trends Charts - Only Two Charts Now */}
       {results && (
         <div className="space-y-6">
-          {/* Three Separate Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SearchVolumeChart 
               productName={productData?.name || "時尚牛仔夾克"}
               data={results.search_trends}
@@ -245,18 +142,7 @@ const MarketTrendAnalysis: React.FC<MarketTrendAnalysisProps> = ({ productData, 
               productName={productData?.name || "時尚牛仔夾克"}
               data={results.search_trends}
             />
-            
-            <EngagementRateChart 
-              productName={productData?.name || "時尚牛仔夾克"}
-              data={results.search_trends}
-            />
           </div>
-
-          {/* Channel Breakdown */}
-          <SearchChannelBreakdown 
-            productName={productData?.name || "時尚牛仔夾克"}
-            channelData={results.channel_breakdown}
-          />
 
           {/* Header Card with Rating */}
           <Card className="card-glass shadow-warm border border-emerald-200/50 bg-gradient-to-br from-emerald-50/50 to-blue-50/50">
