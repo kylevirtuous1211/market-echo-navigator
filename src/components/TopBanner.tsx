@@ -2,8 +2,11 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Star, Heart, Rocket, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const TopBanner: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="gradient-accent border-b border-rose-200/30 py-3 px-4">
       <div className="container mx-auto flex items-center justify-between">
@@ -31,6 +34,7 @@ const TopBanner: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => navigate('/system-design')}
             className="border-amber-300 text-amber-700 hover:bg-amber-50 font-medium"
           >
             <Rocket className="h-4 w-4 mr-1" />
@@ -39,6 +43,7 @@ const TopBanner: React.FC = () => {
           
           <Button
             size="sm"
+            onClick={() => navigate('/product-evaluation')}
             className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-medium shadow-sm"
           >
             立即開始

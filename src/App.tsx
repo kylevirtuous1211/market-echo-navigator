@@ -9,6 +9,7 @@ import ProductEvaluationPage from "./pages/ProductEvaluationPage";
 import DemandPredictionPage from "./pages/DemandPredictionPage";
 import MarketTrendAnalysisPage from "./pages/MarketTrendAnalysisPage";
 import FinalReportPage from "./pages/FinalReportPage";
+import SystemDesignPage from "./pages/SystemDesignPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/demand-prediction" element={<DemandPredictionPage />} />
           <Route path="/market-trend-analysis" element={<MarketTrendAnalysisPage />} />
           <Route path="/final-report" element={<FinalReportPage />} />
+          <Route path="/system-design" element={<SystemDesignPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
