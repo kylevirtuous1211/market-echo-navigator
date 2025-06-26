@@ -9,8 +9,6 @@ import TopBanner from '@/components/TopBanner';
 import Header from '@/components/Header';
 import SearchVolumeChart from '@/components/SearchVolumeChart';
 import TrendScoreChart from '@/components/TrendScoreChart';
-import EngagementRateChart from '@/components/EngagementRateChart';
-import SearchChannelBreakdown from '@/components/SearchChannelBreakdown';
 
 const FinalReportPage = () => {
   const navigate = useNavigate();
@@ -128,9 +126,9 @@ const FinalReportPage = () => {
                 </Card>
               </div>
 
-              {/* Three Separate Charts */}
+              {/* Two Charts Only */}
               {marketAnalysisData?.search_trends && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <SearchVolumeChart 
                     productName={productData?.name || "時尚牛仔夾克"}
                     data={marketAnalysisData.search_trends}
@@ -140,20 +138,7 @@ const FinalReportPage = () => {
                     productName={productData?.name || "時尚牛仔夾克"}
                     data={marketAnalysisData.search_trends}
                   />
-                  
-                  <EngagementRateChart 
-                    productName={productData?.name || "時尚牛仔夾克"}
-                    data={marketAnalysisData.search_trends}
-                  />
                 </div>
-              )}
-
-              {/* Channel Breakdown Section */}
-              {marketAnalysisData?.channel_breakdown && (
-                <SearchChannelBreakdown 
-                  productName={productData?.name || "時尚牛仔夾克"}
-                  channelData={marketAnalysisData.channel_breakdown}
-                />
               )}
 
               {/* Final Recommendations */}
