@@ -10,6 +10,11 @@ interface BaselineDataCardProps {
 const BaselineDataCard: React.FC<BaselineDataCardProps> = ({ productData }) => {
   if (!productData) return null;
 
+  // 處理 NaN 值，提供預設值
+  const avgLifeCycle = productData.baselineMetrics.avgLifeCycle 
+    ? Math.round(productData.baselineMetrics.avgLifeCycle)
+    : 18; // 預設 18 個月
+
   return (
     <Card className="card-glass shadow-warm border border-rose-200/50">
       <CardHeader>
@@ -31,7 +36,7 @@ const BaselineDataCard: React.FC<BaselineDataCardProps> = ({ productData }) => {
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-amber-600">
-              {Math.round(productData.baselineMetrics.avgLifeCycle)}
+              {avgLifeCycle}
             </p>
             <p className="text-sm text-rose-600/70">平均生命週期 (月)</p>
           </div>

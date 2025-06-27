@@ -271,7 +271,7 @@ export const beautyDataService = {
   async calculateBaselineMetrics(category?: string) {
     let query = supabase
       .from('beauty_products_history')
-      .select('sales_velocity, profit_margin');
+      .select('sales_velocity, profit_margin, life_cycle_months');
 
     if (category) {
       query = query.eq('category', category);
@@ -287,16 +287,27 @@ export const beautyDataService = {
     if (!data || data.length === 0) {
       return {
         avgSalesVelocity: 0,
-        avgProfit: 0
+        avgProfit: 0,
+        avgLifeCycle: 18 // 預設值
       };
     }
 
     const avgSalesVelocity = data.reduce((sum, p) => sum + p.sales_velocity, 0) / data.length;
     const avgProfit = data.reduce((sum, p) => sum + p.profit_margin, 0) / data.length;
+    
+    // 計算平均生命週期，過濾掉無效值
+    const validLifeCycles = data
+      .map(p => p.life_cycle_months)
+      .filter(lc => lc && !isNaN(lc) && lc > 0);
+    
+    const avgLifeCycle = validLifeCycles.length > 0 
+      ? validLifeCycles.reduce((sum, lc) => sum + lc, 0) / validLifeCycles.length
+      : 18; // 如果沒有有效數據，使用預設值 18 個月
 
     return {
       avgSalesVelocity: Math.round(avgSalesVelocity),
-      avgProfit: Math.round(avgProfit * 100) / 100
+      avgProfit: Math.round(avgProfit * 100) / 100,
+      avgLifeCycle: Math.round(avgLifeCycle)
     };
   }
 };
